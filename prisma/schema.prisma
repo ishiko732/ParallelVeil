@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Revlog {
-  log_id         String   @id @default(cuid())
+  lid            String   @id @default(cuid())
   cid            String
   grade          Int
   state          Int
