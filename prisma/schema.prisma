@@ -30,10 +30,11 @@ model Card {
   last_review    DateTime?
   type           Int
   log            Revlog[]
+  Note           Note[]
 }
 
 model Parameters {
-  uid               BigInt  @unique
+  uid               BigInt  @id @unique
   request_retention Decimal @default(0.9)
   maximum_interval  BigInt  @default(36500)
   easy_bonus        Decimal @default(1.3)
@@ -44,7 +45,29 @@ model Parameters {
 }
 
 model User {
-  uid        BigInt      @id
+  uid        BigInt      @id @default(autoincrement())
   username   String      @default(cuid())
   Parameters Parameters?
+}
+
+model Note {
+  nid      BigInt  @id @default(autoincrement())
+  text     String  @default("")
+  type     String  @default("Word")
+  cid      String
+  card     Card    @relation(fields: [cid], references: [cid])
+  parentId BigInt?
+  parent   Note?   @relation("SubcategoryOf", fields: [parentId], references: [nid])
+  notes    Note[]  @relation("SubcategoryOf")
+  aid      BigInt
+  article  Article @relation(fields: [aid], references: [aid])
+}
+
+model Article {
+  aid      BigInt  @id @default(autoincrement())
+  title    String  @default("")
+  link     String
+  note     Note[]
+  readed   Boolean @default(false)
+  position BigInt  @default(0)
 }
