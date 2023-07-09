@@ -6,6 +6,8 @@
  * must encodeURI(query)
  * licence : ELECTRONIC DICTIONARY RESEARCH AND DEVELOPMENT GROUP GENERAL DICTIONARY LICENCE STATEMENT
  */
+import fs from "fs";
+import * as jsdom from "jsdom";
 
 const jisho_api = "https://jisho.org/api/v1/search/words?keyword="
 const jisho_page = "https://jisho.org/search/"
@@ -23,12 +25,12 @@ export async function search(keyword: string = "", page: number = 1) {
     return fetch(query)
 }
 
+const {JSDOM} = jsdom;
 
 export async function getAudioUrls(word: string = "") {
     const query = encodeURI(jisho_page + word)
     const data = await fetch(query).then(response => response.text())
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(data, 'text/html');
+    const dom = new JSDOM(data).window.document;
     const audioElements = dom.querySelectorAll('audio')
     const list = []
     for (let elem of audioElements) {
@@ -52,5 +54,26 @@ function _getAudioSourceByType(elem: HTMLAudioElement, type: "mp3" | "ogg") {
     } else if ("ogg" === type) {
         e = elem.querySelector('audio > source[type=\'audio/ogg\']') as HTMLSourceElement | null
     }
-    return e && e.src ? e.src : null
+    return e && e.src ? "https:" + e.src : null
+}
+
+
+export async function downloadFile(mp3Url: string, filePath: string): Promise<void> {
+    const response = await fetch(mp3Url);
+    const fileStream = fs.createWriteStream(filePath);
+    const stream = new WritableStream({
+        write(chunk) {
+            fileStream.write(chunk);
+        },
+    });
+    fileStream.on('finish', () => {
+        fileStream.close();
+    });
+    fileStream.on('error', (err) => {
+        throw err;
+    });
+    if (!response.body) {
+        throw new Error('Response body is null or undefined');
+    }
+    response.body.pipeTo(stream);
 }
