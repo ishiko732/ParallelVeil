@@ -1,6 +1,8 @@
 ---
 title: 'When to Use Static Generation v.s. Server-side Rendering'
-date: '2020-01-02'
+date: '2020-01-02 10:00:24'
+language: 'en-US'
+learning: 'wait'
 ---
 
 We recommend using **Static Generation** (with and without data) whenever possible because your page can be built once
@@ -21,3 +23,9 @@ Maybe your page shows frequently updated data, and the page content changes on e
 
 In that case, you can use **Server-Side Rendering**. It will be slower, but the pre-rendered page will always be
 up-to-date. Or you can skip pre-rendering and use client-side JavaScript to populate data.
+
+this.![ishiko](https://github.com/ishiko732.png)
+
+```typescript
+console.log("hello")
+```

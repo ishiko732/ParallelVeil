@@ -1,0 +1,12 @@
+---
+title: 'When to Use Static Generation v.s. Server-side Rendering'
+date: '2020-01-02 10:00:24'
+language: 'en-US'
+learning: 'wait'
+---
+
+test123 hello world .
+
+```typescript
+console.log("hello")
+```
