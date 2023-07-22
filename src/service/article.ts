@@ -1,10 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import {remark} from 'remark';
-import html from 'remark-html';
+import {ArticlesDirectory} from "@/config/article";
+import {language} from "@/models/language";
 
-const ArticlesDirectory = path.join(process.cwd(), "collect", "article");
+interface markdownTag {
+    title: string,
+    date: string,
+    language: language,
+    learning: string
+}
 
 export interface article {
     id: String
@@ -58,16 +63,43 @@ export async function getArticleData(id: String) {
     // Use gray-matter to parse the post metadata section
     const matterResult = matter(fileContents);
 
-    // Use remark to convert markdown into HTML string
-    const processedContent = await remark()
-        .use(html)
-        .process(matterResult.content);
-    const contentHtml = processedContent.toString();
+    // const toReact=remarkReact({
+    //     createElement: React.createElement,
+    //     remarkReactComponents: components, // additional options
+    //     sanitize: false
+    // })
 
-    // Combine the data with the id and contentHtml
+    // Use remark to convert markdown into HTML string
+    // const processedContent = await unified()
+    //     .use(remarkParse)
+    //     .use(remarkTest)
+    //     .use(highlight)
+    //     .use(html)
+    //     .process(matterResult.content);
+    // // matterResult.content md原始内容
+    // const contentHtml = processedContent.value as string
     return {
         id,
-        contentHtml,
-        ...matterResult.data,
+        text: matterResult.content,
+        ...(matterResult.data as markdownTag),
     };
 }
+
+
+// const remarkTest: () => Transformer = () => {
+//     const transformer: Transformer = (tree: Node) => {
+//         const root = tree as Root;
+//         root.children.push({
+//             type: 'paragraph',
+//             children: [
+//                 {
+//                     type: 'text',
+//                     value: 'hogehoge',
+//                 },
+//             ],
+//         });
+//         return root;
+//     };
+//
+//     return transformer;
+// };

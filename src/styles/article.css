@@ -1,3 +1,28 @@
-span {
-    padding-left: 10px; /* 在相邻的两个 span 元素之间添加 10 像素的间隔 */
+.pv-content {
+    display: inline;
+}
+
+.pv-content + .pv-content {
+    margin-left: 10px;
+}
+
+.pv-content span + span {
+    margin-left: 10px;
+}
+
+.pv-content + strong {
+    margin-left: 10px;
+}
+
+strong + .pv-content {
+    margin-left: 10px;
+}
+
+.pv-content + img {
+    margin-left: 10px;
+}
+
+.note-new {
+    background-color: #ffe599;
+    cursor: pointer;
 }

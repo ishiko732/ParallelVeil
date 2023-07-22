@@ -61,11 +61,12 @@ model Note {
   notes    Note[]  @relation("SubcategoryOf")
   aid      BigInt
   article  Article @relation(fields: [aid], references: [aid])
+  language String  @default("en_US")
+  readed   Boolean @default(false)
 }
 
 model Article {
   aid      BigInt  @id @default(autoincrement())
-  title    String  @default("")
   link     String
   note     Note[]
   readed   Boolean @default(false)
