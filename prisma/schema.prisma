@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Revlog {
-  lid            String   @id @default(cuid())
+  lid            String   @id @unique @default(cuid())
   cid            String
   grade          Int
   state          Int
@@ -18,7 +18,7 @@ model Revlog {
 }
 
 model Card {
-  cid            String    @id @default(cuid())
+  cid            String    @id @unique @default(cuid())
   due            DateTime  @default(now())
   stability      Float
   difficulty     Float
@@ -34,7 +34,7 @@ model Card {
 }
 
 model Parameters {
-  uid               BigInt  @id @unique
+  uid               Int     @id @unique
   request_retention Decimal @default(0.9)
   maximum_interval  BigInt  @default(36500)
   easy_bonus        Decimal @default(1.3)
@@ -45,28 +45,28 @@ model Parameters {
 }
 
 model User {
-  uid        BigInt      @id @default(autoincrement())
+  uid        Int         @id @default(autoincrement())
   username   String      @default(cuid())
   Parameters Parameters?
 }
 
 model Note {
-  nid      BigInt  @id @default(autoincrement())
+  nid      String  @id @unique @default(cuid())
   text     String  @default("")
   type     String  @default("Word")
   cid      String
   card     Card    @relation(fields: [cid], references: [cid])
-  parentId BigInt?
+  parentId String?
   parent   Note?   @relation("SubcategoryOf", fields: [parentId], references: [nid])
   notes    Note[]  @relation("SubcategoryOf")
-  aid      BigInt
+  aid      Int
   article  Article @relation(fields: [aid], references: [aid])
   language String  @default("en_US")
   readed   Boolean @default(false)
 }
 
 model Article {
-  aid      BigInt  @id @default(autoincrement())
+  aid      Int     @id @unique @default(autoincrement())
   link     String
   note     Note[]
   readed   Boolean @default(false)
