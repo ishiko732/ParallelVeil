@@ -77,6 +77,7 @@ model ArticleNote {
   aid     Int
   nid     String
   note    Note    @relation(fields: [nid], references: [nid])
+  quote   String
   article Article @relation(fields: [aid], references: [aid])
 
   @@id([aid, nid])

@@ -2,12 +2,14 @@ import Head from 'next/head';
 import Date from '@/components/date';
 import {getAllArticleIds, getArticleData} from "@/service/article";
 import 'highlight.js/styles/default.css';
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article, Card, Note} from "@prisma/client";
 import createNote from "@/service/db/note";
 import {State, StateType} from "ts-fsrs";
+import {point} from "@/models/article";
+import PopupWord from "@/components/article/content/popupWord";
 
 interface article {
     id: string,
@@ -18,6 +20,8 @@ interface article {
 }
 
 export default function Article(props: { articleData: article, convertToHtml: string, words: string }) {
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [popupPosition, setPopupPosition] = useState({x: 0, y: 0} as point);
 
     const {articleData, convertToHtml} = props
     if (articleData.language == undefined) {
@@ -47,6 +51,26 @@ export default function Article(props: { articleData: article, convertToHtml: st
 
     }, [props])
 
+    const handleClick = useCallback((event: MouseEvent) => {
+        const vm = event.target as HTMLSpanElement
+        console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
+        setIsPopupVisible(true);
+        setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
+        switch (State[vm.dataset["state"] as StateType]) {
+            case State.New:
+                vm.className = "note note-learn"
+                vm.dataset["state"] = State[State.Learning]
+                break;
+            case State.Learning:
+            case State.Relearning:
+                vm.className = "note";
+                vm.dataset["state"] = State[State.Review]
+                break;
+            case State.Review:
+                break;
+
+        }
+    }, [])
     useEffect(() => {
         // 获取所有class为pv-content的元素
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
@@ -56,33 +80,13 @@ export default function Article(props: { articleData: article, convertToHtml: st
             pvNote.addEventListener("click", handleClick);
         });
 
-        // 定义点击事件处理函数
-        function handleClick(this: HTMLSpanElement) {
-            console.log(this.innerText, this.parentElement?.innerText);
-            switch (State[this.dataset["state"] as StateType]) {
-                case State.New:
-                    this.className = "note note-learn"
-                    this.dataset["state"] = State[State.Learning]
-                    break;
-                case State.Learning:
-                case State.Relearning:
-                    this.className = "note";
-                    this.dataset["state"] = State[State.Review]
-                    break;
-                case State.Review:
-                    break;
-
-            }
-
-        }
-
         // 在组件卸载时解绑所有点击事件
         return () => {
             pvNotes.forEach((pvNote) => {
                 pvNote.removeEventListener("click", handleClick);
             });
         };
-    }, []);
+    }, [handleClick]);
 
     return (
         <div>
@@ -94,6 +98,8 @@ export default function Article(props: { articleData: article, convertToHtml: st
             <br/>
             <Date dateString={articleData.date}/>
             <br/>
+            <PopupWord isPopupVisible={isPopupVisible} setIsPopupVisible={setIsPopupVisible}
+                       popupPosition={popupPosition} setPopupPosition={setPopupPosition}/>
             <div dangerouslySetInnerHTML={{__html: convertToHtml}}/>
         </div>
     );

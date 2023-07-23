@@ -2,18 +2,26 @@ import {Span, Text} from "lowlight/lib/core";
 import {unified} from "unified";
 import remarkParse from "remark-parse";
 import highlight from "remark-highlight.js";
-import {regexSymbol} from "@/service/analyzer/index";
+import {checkAST, regexSymbol} from "@/service/analyzer/index";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
-import {Literal, Node} from "unist";
+import {Literal, Node, Parent} from "unist";
 import {visit} from "unist-util-visit";
 import splitWords from "./en_US";
 
 
 export function convertParagraph() {
     return (tree: Node) => {
-        visit(tree, 'paragraph', (node: Literal) => {
+        visit(tree, 'paragraph', (node: Parent) => {
+            let {data} = node
             node.type = 'element'
+            if (!data) {
+                data = {}
+                node.data = data
+            }
+            data.hProperties = {
+                className: ['paragraph']
+            }
         })
     }
 
@@ -31,7 +39,7 @@ export function addSpan(value: string, className: Array<string> = []): Span {
         type: 'element',
         tagName: 'span',
         properties: {className: regexSymbol(value) ? [] : className},
-        children: [addText(value)]
+        children: [addText(value)],
     }
 }
 
@@ -50,7 +58,7 @@ export async function convertMdToHTML(text: string, collect: Set<string> = new S
         .use(convertParagraph)
         .use(remarkTest, collect)
         .use(highlight)
-        // .use(checkAST) //mdastにアクセス
+        .use(checkAST) //mdastにアクセス
         .use(remarkRehype) // mdast → hast
         .use(rehypeStringify) //  hast → HTML
         // .use(checkAST) //mdastにアクセス
@@ -82,11 +90,10 @@ function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) 
                     data = {}
                     node.data = data
                 }
-                const props = /** @type {import('hast').Properties} */ (
-                    data.hProperties || (data.hProperties = {})
-                )
-                // @ts-ignore
-                props.className = ['pv-content']
+                data.hProperties = {
+                    className: ['pv-content'],
+                    "data-value": value
+                }
                 data.hChildren = words
             }
         })
