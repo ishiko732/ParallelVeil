@@ -22,7 +22,14 @@ strong + .pv-content {
     margin-left: 10px;
 }
 
+.note {
+    cursor: pointer;
+}
+
 .note-new {
     background-color: #ffe599;
-    cursor: pointer;
+}
+
+.note-learn {
+    background-color: #acff99;
 }

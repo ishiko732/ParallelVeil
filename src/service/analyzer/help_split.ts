@@ -9,6 +9,7 @@ import {Literal, Node} from "unist";
 import {visit} from "unist-util-visit";
 import splitWords from "./en_US";
 
+
 export function convertParagraph() {
     return (tree: Node) => {
         visit(tree, 'paragraph', (node: Literal) => {
@@ -43,11 +44,11 @@ function addText(value: string): Text {
 }
 
 
-export async function convertMdToHTML(text: string): Promise<string> {
+export async function convertMdToHTML(text: string, collect: Set<string> = new Set<string>()): Promise<string> {
     return unified()
         .use(remarkParse) // Markdown → mdast
         .use(convertParagraph)
-        .use(remarkTest)
+        .use(remarkTest, collect)
         .use(highlight)
         // .use(checkAST) //mdastにアクセス
         .use(remarkRehype) // mdast → hast
@@ -57,7 +58,7 @@ export async function convertMdToHTML(text: string): Promise<string> {
 }
 
 
-function remarkTest(splitCallback: Function = splitWords) {
+function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) {
     return (tree: Node) => {
         visit(tree, (node) => {
             let {type, data, value} = node as Literal
@@ -73,7 +74,8 @@ function remarkTest(splitCallback: Function = splitWords) {
                     node.type = 'element'
                 }
                 const words: Span[] = splitCallback((value as string)).map((text: string) => {
-                        return addSpan(text, ['note-new'])
+                        !regexSymbol(text) && collect.add(text)
+                        return addSpan(text, ['note'])
                     }
                 )
                 if (!data) {

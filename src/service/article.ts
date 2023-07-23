@@ -45,8 +45,8 @@ export function getSortedArticlesData() {
     });
 }
 
-export function getAllArticleIds() {
-    const fileNames = fs.readdirSync(ArticlesDirectory);
+export function getAllArticleIds(id?: string) {
+    const fileNames = fs.readdirSync(id ? path.join(ArticlesDirectory, id) : ArticlesDirectory);
     return fileNames.map((fileName) => {
         return {
             params: {
@@ -56,28 +56,19 @@ export function getAllArticleIds() {
     });
 }
 
-export async function getArticleData(id: String) {
+export async function getArticleData(id: string) {
+    // if (fs.lstatSync(path.join(ArticlesDirectory, id)).isDirectory()) {
+    //     return {
+    //         id,
+    //         directory: true
+    //     }
+    // }
     const fullPath = path.join(ArticlesDirectory, `${id}.md`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
 
     // Use gray-matter to parse the post metadata section
     const matterResult = matter(fileContents);
 
-    // const toReact=remarkReact({
-    //     createElement: React.createElement,
-    //     remarkReactComponents: components, // additional options
-    //     sanitize: false
-    // })
-
-    // Use remark to convert markdown into HTML string
-    // const processedContent = await unified()
-    //     .use(remarkParse)
-    //     .use(remarkTest)
-    //     .use(highlight)
-    //     .use(html)
-    //     .process(matterResult.content);
-    // // matterResult.content md原始内容
-    // const contentHtml = processedContent.value as string
     return {
         id,
         text: matterResult.content,
