@@ -30,7 +30,8 @@ model Card {
   last_review    DateTime?
   type           Int
   log            Revlog[]
-  Note           Note[]
+  nid            String?   @unique
+  note           Note?     @relation(fields: [nid], references: [nid])
 }
 
 model Parameters {
@@ -47,28 +48,36 @@ model Parameters {
 model User {
   uid        Int         @id @default(autoincrement())
   username   String      @default(cuid())
-  Parameters Parameters?
+  parameters Parameters?
 }
 
 model Note {
-  nid      String  @id @unique @default(cuid())
-  text     String  @default("")
-  type     String  @default("Word")
-  cid      String
-  card     Card    @relation(fields: [cid], references: [cid])
-  parentId String?
-  parent   Note?   @relation("SubcategoryOf", fields: [parentId], references: [nid])
-  notes    Note[]  @relation("SubcategoryOf")
-  aid      Int
-  article  Article @relation(fields: [aid], references: [aid])
-  language String  @default("en_US")
-  readed   Boolean @default(false)
+  nid         String        @id @unique @default(cuid())
+  text        String        @default("")
+  answer      String        @default("")
+  type        String        @default("Word")
+  parentId    String?
+  parent      Note?         @relation("SubcategoryOf", fields: [parentId], references: [nid])
+  notes       Note[]        @relation("SubcategoryOf")
+  language    String        @default("en_US")
+  readed      Boolean       @default(false)
+  articleNote ArticleNote[]
+  card        Card?
 }
 
 model Article {
-  aid      Int     @id @unique @default(autoincrement())
-  link     String
-  note     Note[]
-  readed   Boolean @default(false)
-  position BigInt  @default(0)
+  aid         Int           @id @unique @default(autoincrement())
+  link        String
+  read        Boolean       @default(false)
+  position    Int           @default(0)
+  ArticleNote ArticleNote[]
+}
+
+model ArticleNote {
+  aid     Int
+  nid     String
+  note    Note    @relation(fields: [nid], references: [nid])
+  article Article @relation(fields: [aid], references: [aid])
+
+  @@id([aid, nid])
 }
