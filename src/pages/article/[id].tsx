@@ -6,12 +6,12 @@ import React, {createRef, useCallback, useEffect, useRef, useState} from "react"
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article, Card, Note} from "@prisma/client";
-import createNote from "@/service/db/note";
+import {createNote} from "@/service/db/note";
 import {State, StateType} from "ts-fsrs";
 import {point} from "@/models/article";
 import PopupWord from "@/components/article/content/popupWord";
 import CollectSelect from "@/components/article/content/collectSelect";
-import ExtractContext, {extractInterface} from "@/context/extractContext";
+import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
 
 interface article {
     id: string,
@@ -26,10 +26,16 @@ export default function Article(props: { articleData: article, convertToHtml: st
     const [isCollectVisible, setIsCollectVisible] = useState(false);
     const [popupPosition, setPopupPosition] = useState({x: 0, y: 0} as point);
     const contentRef = createRef<HTMLDivElement>()
+    const currentWordRef = useRef<currentWordInterface>({
+        text: '',
+        quote: ''
+    })
     const textRef = useRef('')
+
 
     const extractValue: extractInterface = {
         textRef,
+        currentWordRef,
         isPopupVisible,
         setIsPopupVisible,
         isCollectVisible,
@@ -48,10 +54,12 @@ export default function Article(props: { articleData: article, convertToHtml: st
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
         pvNotes.forEach((pvNote) => {
             const note = (map[pvNote.innerText.trim()] as Note & { card: Card })
+            console.log(note)
             const current = State[note.card.state] as StateType
             pvNote.id = note.nid;
             pvNote.dataset["cid"] = note.card.cid
             pvNote.dataset["state"] = current
+            pvNote.dataset['text'] = pvNote.innerText.trim()
             switch (State[current]) {
                 case State.New:
                     pvNote.className = "note note-new";
@@ -62,12 +70,24 @@ export default function Article(props: { articleData: article, convertToHtml: st
                     break
             }
         });
-
     }, [props])
+
+    useEffect(() => {
+        if (currentWordRef.current.entity) {
+            console.log(currentWordRef.current.entity)
+        }
+    }, [currentWordRef])
+
 
     const handleClick = useCallback((event: MouseEvent) => {
         const vm = event.target as HTMLSpanElement
         // console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
+        textRef.current = vm.innerText
+        currentWordRef.current = {
+            text: vm.innerText.trim(),
+            quote: vm.parentElement?.parentElement?.innerText || '',
+            nid: vm.id
+        }
         setIsPopupVisible(true);
         setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
         switch (State[vm.dataset["state"] as StateType]) {

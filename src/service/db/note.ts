@@ -2,7 +2,8 @@ import {Prisma, PrismaClient} from "@prisma/client";
 import {createEmptyCard} from "ts-fsrs";
 
 const prisma = new PrismaClient()
-export default async function createNote(data: Prisma.NoteCreateInput) {
+
+export async function createNote(data: Prisma.NoteCreateInput) {
     const {text, type, language} = data
     const existingNote = await prisma.note.findFirst({
         where: {text: text as string, type, language},
@@ -32,4 +33,14 @@ export default async function createNote(data: Prisma.NoteCreateInput) {
             card: true,
         },
     })
+}
+
+export async function findNote_by_nid(data: Prisma.NoteWhereUniqueInput) {
+    return prisma.note.findUnique({
+        where: data,
+        include: {
+            card: true
+        }
+    })
+
 }

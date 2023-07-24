@@ -1,5 +1,6 @@
-import {useCallback, useContext, useEffect, useRef} from "react";
+import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import ExtractContext from "@/context/extractContext";
+import {Card, Note} from "@prisma/client";
 
 export default function PopupWord() {
     const props = useContext(ExtractContext)
@@ -9,9 +10,20 @@ export default function PopupWord() {
             props.setIsPopupVisible(false);
         }
     }, [props]);
+    const [note, setNote] = useState<Note & { card: Card }>()
 
     useEffect(() => {
         if (props.isPopupVisible) {
+            (async () => {
+                const current = props.currentWordRef.current
+                const data = await fetch('/api/note/' + current.nid, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(res => res.json())
+                setNote(data)
+            })()
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -20,6 +32,7 @@ export default function PopupWord() {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [handleClickOutside, props.isPopupVisible]);
     return props.isPopupVisible ? (
         <div
@@ -35,13 +48,11 @@ export default function PopupWord() {
         >
 
             <div>
-                Popup content
+                {JSON.stringify(props.currentWordRef.current)}
             </div>
+            <hr/>
             <div>
-                Popup content
-            </div>
-            <div>
-                Popup content
+                {JSON.stringify(note)}
             </div>
         </div>
     ) : null
