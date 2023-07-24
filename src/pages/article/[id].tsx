@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Date from '@/components/date';
 import {getAllArticleIds, getArticleData} from "@/service/article";
 import 'highlight.js/styles/default.css';
-import React, {useCallback, useEffect, useState} from "react";
+import React, {createRef, useCallback, useEffect, useState} from "react";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article, Card, Note} from "@prisma/client";
@@ -22,6 +22,7 @@ interface article {
 export default function Article(props: { articleData: article, convertToHtml: string, words: string }) {
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [popupPosition, setPopupPosition] = useState({x: 0, y: 0} as point);
+    const contentRef = createRef<HTMLDivElement>()
 
     const {articleData, convertToHtml} = props
     if (articleData.language == undefined) {
@@ -71,6 +72,25 @@ export default function Article(props: { articleData: article, convertToHtml: st
 
         }
     }, [])
+
+    useEffect(() => {
+        const handleClick = () => {
+            const text =
+                window.getSelection()?.toString().replace(/\r\n/g, "")
+                    .replace(/\n/g, "");
+            if (text) {
+                console.log(text)
+            }
+        }
+        const e = contentRef.current
+        if (e) {
+            e.addEventListener("mouseup", handleClick)
+            return () => {
+                e.removeEventListener("mouseup", handleClick)
+            }
+        }
+
+    }, [contentRef])
     useEffect(() => {
         // 获取所有class为pv-content的元素
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
@@ -100,7 +120,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
             <br/>
             <PopupWord isPopupVisible={isPopupVisible} setIsPopupVisible={setIsPopupVisible}
                        popupPosition={popupPosition} setPopupPosition={setPopupPosition}/>
-            <div dangerouslySetInnerHTML={{__html: convertToHtml}}/>
+            <div ref={contentRef} dangerouslySetInnerHTML={{__html: convertToHtml}}/>
         </div>
     );
 }
