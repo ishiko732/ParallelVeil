@@ -1,11 +1,8 @@
-import {Dispatch, SetStateAction, useCallback, useEffect, useRef} from "react";
-import {point} from "@/models/article";
+import {useCallback, useContext, useEffect, useRef} from "react";
+import ExtractContext from "@/context/extractContext";
 
-export default function PopupWord(props: {
-    isPopupVisible: boolean,
-    setIsPopupVisible: Dispatch<SetStateAction<boolean>>,
-    popupPosition: point, setPopupPosition: Dispatch<SetStateAction<point>>
-}) {
+export default function PopupWord() {
+    const props = useContext(ExtractContext)
     const popupRef = useRef<HTMLDivElement>(null);
     const handleClickOutside = useCallback((event: MouseEvent) => {
         if (popupRef.current && !popupRef.current.contains(event.target as Node)) {

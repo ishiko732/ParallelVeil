@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Date from '@/components/date';
 import {getAllArticleIds, getArticleData} from "@/service/article";
 import 'highlight.js/styles/default.css';
-import React, {createRef, useCallback, useEffect, useState} from "react";
+import React, {createRef, useCallback, useEffect, useRef, useState} from "react";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article, Card, Note} from "@prisma/client";
@@ -10,6 +10,8 @@ import createNote from "@/service/db/note";
 import {State, StateType} from "ts-fsrs";
 import {point} from "@/models/article";
 import PopupWord from "@/components/article/content/popupWord";
+import CollectSelect from "@/components/article/content/collectSelect";
+import ExtractContext, {extractInterface} from "@/context/extractContext";
 
 interface article {
     id: string,
@@ -21,9 +23,20 @@ interface article {
 
 export default function Article(props: { articleData: article, convertToHtml: string, words: string }) {
     const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [isCollectVisible, setIsCollectVisible] = useState(false);
     const [popupPosition, setPopupPosition] = useState({x: 0, y: 0} as point);
     const contentRef = createRef<HTMLDivElement>()
+    const textRef = useRef('')
 
+    const extractValue: extractInterface = {
+        textRef,
+        isPopupVisible,
+        setIsPopupVisible,
+        isCollectVisible,
+        setIsCollectVisible,
+        popupPosition,
+        setPopupPosition,
+    }
     const {articleData, convertToHtml} = props
     if (articleData.language == undefined) {
         articleData.language = 'Default'
@@ -54,7 +67,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
 
     const handleClick = useCallback((event: MouseEvent) => {
         const vm = event.target as HTMLSpanElement
-        console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
+        // console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
         setIsPopupVisible(true);
         setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
         switch (State[vm.dataset["state"] as StateType]) {
@@ -74,12 +87,15 @@ export default function Article(props: { articleData: article, convertToHtml: st
     }, [])
 
     useEffect(() => {
-        const handleClick = () => {
+        const handleClick = (event: MouseEvent) => {
             const text =
                 window.getSelection()?.toString().replace(/\r\n/g, "")
                     .replace(/\n/g, "");
+            const vm = event.target as HTMLDivElement
             if (text) {
-                console.log(text)
+                textRef.current = text
+                setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
+                setIsCollectVisible(true)
             }
         }
         const e = contentRef.current
@@ -118,8 +134,10 @@ export default function Article(props: { articleData: article, convertToHtml: st
             <br/>
             <Date dateString={articleData.date}/>
             <br/>
-            <PopupWord isPopupVisible={isPopupVisible} setIsPopupVisible={setIsPopupVisible}
-                       popupPosition={popupPosition} setPopupPosition={setPopupPosition}/>
+            <ExtractContext.Provider value={extractValue}>
+                <CollectSelect/>
+                <PopupWord/>
+            </ExtractContext.Provider>
             <div ref={contentRef} dangerouslySetInnerHTML={{__html: convertToHtml}}/>
         </div>
     );
