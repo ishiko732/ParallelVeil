@@ -54,7 +54,9 @@ export default function Article(props: { articleData: article, convertToHtml: st
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
         pvNotes.forEach((pvNote) => {
             const note = (map[pvNote.innerText.trim()] as Note & { card: Card })
-            console.log(note)
+            if (note === undefined || note.card === undefined) {
+                return
+            }
             const current = State[note.card.state] as StateType
             pvNote.id = note.nid;
             pvNote.dataset["cid"] = note.card.cid
@@ -116,6 +118,14 @@ export default function Article(props: { articleData: article, convertToHtml: st
                 textRef.current = text
                 setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
                 setIsCollectVisible(true)
+                //TODO
+                // const range = window.getSelection()?.getRangeAt(0);
+                // const copy=range?.cloneContents() as DocumentFragment
+                // // const span = document.createElement('span');
+                // // span.textContent = text;
+                // // span.style.textDecoration = 'underline';
+                // range?.deleteContents();
+                // range?.insertNode(copy);
             }
         }
         const e = contentRef.current
