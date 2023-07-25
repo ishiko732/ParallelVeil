@@ -168,7 +168,9 @@ export default function Article(props: { articleData: article, convertToHtml: st
                 <CollectSelect/>
                 <PopupWord/>
             </ExtractContext.Provider>
-            <div ref={contentRef} dangerouslySetInnerHTML={{__html: convertToHtml}}/>
+            <div ref={contentRef}
+                 className="text-text bg-background dark:text-dark dark:bg-dark"
+                 dangerouslySetInnerHTML={{__html: convertToHtml}}/>
         </div>
     );
 }

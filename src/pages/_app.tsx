@@ -1,4 +1,4 @@
-import "@/styles/article.css"
+import "@@/public/styles/article.css"
 import {AppProps} from "next/app";
 
 interface CustomPageProps {

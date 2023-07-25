@@ -27,9 +27,13 @@ strong + .pv-content {
 }
 
 .note-new {
-    background-color: #ffe599;
+    background-color: #dae3fc;
 }
 
 .note-learn {
-    background-color: #acff99;
+    background-color: #97f7ad;
+}
+
+.note-recall {
+    background-color: #f59b80;
 }
