@@ -1,3 +1,22 @@
+h1, h2, h3, h4, h5, h6 {
+    text-align: center;
+}
+
+time {
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+hr {
+    width: 80%;
+}
+
+.pv-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
 .pv-content {
     display: inline;
 }

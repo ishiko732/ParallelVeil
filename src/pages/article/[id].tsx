@@ -161,7 +161,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
             </Head>
             <br/>
             <h3>{articleData.id}</h3>
-            <br/>
+            <hr/>
             <Date dateString={articleData.date}/>
             <br/>
             <ExtractContext.Provider value={extractValue}>
@@ -169,7 +169,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
                 <PopupWord/>
             </ExtractContext.Provider>
             <div ref={contentRef}
-                 className="text-text bg-background dark:text-dark dark:bg-dark"
+                 className="pv-container"
                  dangerouslySetInnerHTML={{__html: convertToHtml}}/>
         </div>
     );
