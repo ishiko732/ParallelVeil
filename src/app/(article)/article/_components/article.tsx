@@ -1,0 +1,11 @@
+import {getAllArticleIds} from "@/service/article";
+import ArticleLink from "@/components/article/articleLink";
+import 'server-only'
+
+export default function Article() {
+    const allArticleData = getAllArticleIds();
+    return allArticleData.map((articleData) => <ArticleLink key={articleData.params.id}
+                                                            articleData={articleData.params}/>
+    )
+}
+

@@ -1,17 +1,13 @@
-import Head from 'next/head';
+'use client'
 import Date from '@/components/date';
-import {getAllArticleIds, getArticleData} from "@/service/article";
 import 'highlight.js/styles/default.css';
 import React, {createRef, useCallback, useEffect, useRef, useState} from "react";
-import {convertMdToHTML} from "@/service/analyzer/help_split";
-import {createArticle} from "@/service/db/article";
-import {Article, Card, Note} from "@prisma/client";
-import {createNote} from "@/service/db/note";
+import {Card, Note} from "@prisma/client";
 import {State, StateType} from "ts-fsrs";
-import {point} from "@/models/article";
 import PopupWord from "@/components/article/content/popupWord";
 import CollectSelect from "@/components/article/content/collectSelect";
 import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
+import Head from "next/head";
 
 interface article {
     id: string,
@@ -21,7 +17,7 @@ interface article {
     text: string
 }
 
-export default function Article(props: { articleData: article, convertToHtml: string, words: string }) {
+export default function Article(props: { articleData: article, convertToHtml: string, words: { [key: string]: Note & { card: Card | null } } }) {
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [isCollectVisible, setIsCollectVisible] = useState(false);
     const [popupPosition, setPopupPosition] = useState({x: 0, y: 0} as point);
@@ -50,7 +46,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
     const pageTitle = `${articleData.language} - ${articleData.title}`;
 
     useEffect(() => {
-        const map = JSON.parse(props.words)
+        const map = props.words
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
         pvNotes.forEach((pvNote) => {
             const note = (map[pvNote.innerText.trim()] as Note & { card: Card })
@@ -173,34 +169,4 @@ export default function Article(props: { articleData: article, convertToHtml: st
                  dangerouslySetInnerHTML={{__html: convertToHtml}}/>
         </div>
     );
-}
-
-export async function getStaticPaths() {
-    const paths = getAllArticleIds();
-    return {
-        paths,
-        fallback: false,
-    };
-}
-
-export async function getStaticProps({params}: { params: article }) {
-    const articleData = await getArticleData(params.id);
-    const collect = new Set<string>();
-    const promiseAll = [convertMdToHTML(articleData.text, collect), createArticle({link: params.id})]
-    const [convertToHtml, dbArticle]: (string | Article)[] = await Promise.all(promiseAll)
-    // const aid = (dbArticle as Article).aid
-    const promiseWords = Array.from(collect).map(word => createNote({
-        text: word
-    }))
-    const words: any = {}
-    Array.from(await Promise.all(promiseWords)).forEach(word => words[word.text] = word)
-
-    return {
-        props: {
-            articleData,
-            convertToHtml: convertToHtml,
-            dbArticle,
-            words: JSON.stringify(words)
-        },
-    };
 }

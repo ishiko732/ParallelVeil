@@ -1,6 +1,6 @@
 {
   "name": "parallel-veil",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -37,6 +37,7 @@
     "postcss": "8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-loading-skeleton": "^3.3.1",
     "rehype-react": "^7.2.0",
     "rehype-shiki": "^0.0.9",
     "remark": "^14.0.3",
@@ -57,5 +58,8 @@
     "remark-parse": "^10.0.2",
     "remark-rehype": "^10.1.0",
     "unified": "^10.1.2"
+  },
+  "prisma": {
+    "schema": "src/db/schema.prisma"
   }
 }

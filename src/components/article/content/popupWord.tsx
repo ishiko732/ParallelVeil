@@ -1,3 +1,4 @@
+'use client'
 import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import ExtractContext from "@/context/extractContext";
 import {Card, Note} from "@prisma/client";

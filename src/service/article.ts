@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import {ArticlesDirectory} from "@/config/article";
-import {language} from "@/models/language";
 
 interface markdownTag {
     title: string,

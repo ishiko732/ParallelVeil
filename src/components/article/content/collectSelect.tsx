@@ -1,3 +1,4 @@
+'use client'
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import {useCallback, useContext, useEffect, useRef} from "react";
 import ExtractContext from "@/context/extractContext";

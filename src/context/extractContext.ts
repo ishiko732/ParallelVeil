@@ -1,5 +1,4 @@
 import React, {Dispatch, MutableRefObject, SetStateAction} from "react";
-import {point} from "@/models/article";
 import {Card, Note} from "@prisma/client";
 
 export interface currentWordInterface {
