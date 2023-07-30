@@ -13,7 +13,7 @@ export async function createNote(data: Prisma.NoteCreateInput) {
     })
 
     if (existingNote) {
-        console.log(text + 'note already exists')
+        // console.log(text + 'note already exists')
         return existingNote
     }
     const emptyCard = createEmptyCard()

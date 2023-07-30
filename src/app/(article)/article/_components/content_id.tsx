@@ -1,7 +1,7 @@
 'use client'
 import Date from '@/components/date';
 import 'highlight.js/styles/default.css';
-import React, {createRef, useCallback, useEffect, useRef, useState} from "react";
+import React, {createRef, useEffect, useRef, useState} from "react";
 import {Card, Note} from "@prisma/client";
 import {State, StateType} from "ts-fsrs";
 import PopupWord from "@/components/article/content/popupWord";
@@ -54,10 +54,6 @@ export default function Article(props: { articleData: article, convertToHtml: st
                 return
             }
             const current = State[note.card.state] as StateType
-            pvNote.id = note.nid;
-            pvNote.dataset["cid"] = note.card.cid
-            pvNote.dataset["state"] = current
-            pvNote.dataset['text'] = pvNote.innerText.trim()
             switch (State[current]) {
                 case State.New:
                     pvNote.className = "note note-new";
@@ -68,7 +64,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
                     break
             }
         });
-    }, [props])
+    }, [props, isPopupVisible])
 
     useEffect(() => {
         if (currentWordRef.current.entity) {
@@ -77,32 +73,32 @@ export default function Article(props: { articleData: article, convertToHtml: st
     }, [currentWordRef])
 
 
-    const handleClick = useCallback((event: MouseEvent) => {
+    const handleClick = (event: MouseEvent) => {
         const vm = event.target as HTMLSpanElement
-        // console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
-        textRef.current = vm.innerText
+        console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
+        textRef.current = vm.innerText.trim() as string
+        const note = props.words[textRef.current] as Note & { card: Card }
+        const card = note.card
         currentWordRef.current = {
-            text: vm.innerText.trim(),
+            text: note.text,
             quote: vm.parentElement?.parentElement?.innerText || '',
-            nid: vm.id
+            nid: note.nid
         }
         setIsPopupVisible(true);
         setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
-        switch (State[vm.dataset["state"] as StateType]) {
+        switch (card.state) {
             case State.New:
-                vm.className = "note note-learn"
-                vm.dataset["state"] = State[State.Learning]
+                card.state = State.Learning
                 break;
             case State.Learning:
             case State.Relearning:
-                vm.className = "note";
-                vm.dataset["state"] = State[State.Review]
+                card.state = State.Review
                 break;
             case State.Review:
                 break;
 
         }
-    }, [])
+    }
 
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {
