@@ -4,8 +4,8 @@ import 'highlight.js/styles/default.css';
 import React, {createRef, useEffect, useRef, useState} from "react";
 import {Card, Note} from "@prisma/client";
 import {State, StateType} from "ts-fsrs";
-import PopupWord from "@/components/article/content/popupWord";
-import CollectSelect from "@/components/article/content/collectSelect";
+import PopupWord from "@/app/(article)/article/_components/showModal/popupWord";
+import CollectSelect from "@/app/(article)/article/_components/showModal/collectSelect";
 import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
 import Head from "next/head";
 
@@ -64,7 +64,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
                     break
             }
         });
-    }, [props, isPopupVisible])
+    }, [props, isPopupVisible, isCollectVisible])
 
     useEffect(() => {
         if (currentWordRef.current.entity) {

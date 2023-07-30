@@ -1,5 +1,5 @@
 import {getAllArticleIds} from "@/service/article";
-import ArticleLink from "@/components/article/articleLink";
+import ArticleLink from "@/app/(article)/article/_components/articleLink";
 import 'server-only'
 
 export default function Article() {

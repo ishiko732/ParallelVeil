@@ -2,6 +2,8 @@
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import {useCallback, useContext, useEffect, useRef} from "react";
 import ExtractContext from "@/context/extractContext";
+import ShowModal from "@/components/showModal";
+
 
 export default function CollectSelect() {
     const props = useContext(ExtractContext);
@@ -24,16 +26,14 @@ export default function CollectSelect() {
         };
     }, [handleClickOutside, props.isCollectVisible]);
 
-    return props.isCollectVisible ? (<div style={{
-        position: 'fixed',
-        top: props.popupPosition.y,
-        left: props.popupPosition.x,
-        backgroundColor: '#fff',
-        boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-        padding: '10px',
-    }}
-                                          ref={popupRef}
-    >
-        {props.textRef.current} <AddToPhotosIcon/>
-    </div>) : null
+    return props.isCollectVisible ? (
+            <ShowModal popupPosition={props.popupPosition}
+                       style={{
+                           top: props.popupPosition.y,
+                           left: props.popupPosition.x,
+                           maxWidth: '500px'
+                       }}
+                       ref={popupRef}> {props.textRef.current}<AddToPhotosIcon/>
+            </ShowModal>)
+        : null
 }

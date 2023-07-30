@@ -1,9 +1,12 @@
 'use client'
-import {useCallback, useContext, useEffect, useRef, useState} from "react";
+import {useCallback, useContext, useEffect, useRef, useState, useTransition} from "react";
 import ExtractContext from "@/context/extractContext";
 import {Card, Note} from "@prisma/client";
+import ShowModal from "@/components/showModal";
+
 
 export default function PopupWord() {
+    let [isPending, startTransition] = useTransition()
     const props = useContext(ExtractContext)
     const popupRef = useRef<HTMLDivElement>(null);
     const handleClickOutside = useCallback((event: MouseEvent) => {
@@ -17,7 +20,7 @@ export default function PopupWord() {
         if (props.isPopupVisible) {
             (async () => {
                 const current = props.currentWordRef.current
-                const data = await fetch('/api/note/' + current.nid, {
+                const data = await fetch(`/api/note/${current.nid}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -35,19 +38,14 @@ export default function PopupWord() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [handleClickOutside, props.isPopupVisible]);
-    return props.isPopupVisible ? (
-        <div
-            style={{
-                position: 'fixed',
-                top: props.popupPosition.y,
-                left: props.popupPosition.x,
-                backgroundColor: '#fff',
-                boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-                padding: '10px',
-            }}
-            ref={popupRef}
-        >
-
+    return props.isPopupVisible ?
+        (<ShowModal popupPosition={props.popupPosition}
+                    style={{
+                        top: props.popupPosition.y,
+                        left: props.popupPosition.x,
+                        maxWidth: '500px'
+                    }}
+                    ref={popupRef}>
             <div>
                 {JSON.stringify(props.currentWordRef.current)}
             </div>
@@ -55,6 +53,6 @@ export default function PopupWord() {
             <div>
                 {JSON.stringify(note)}
             </div>
-        </div>
-    ) : null
+        </ShowModal>)
+        : null
 }
