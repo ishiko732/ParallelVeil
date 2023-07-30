@@ -29,15 +29,15 @@ model Card {
   state          Int       @default(0)
   last_review    DateTime?
   type           Int
-  log            Revlog[]
   nid            String?   @unique
   note           Note?     @relation(fields: [nid], references: [nid])
+  log            Revlog[]
 }
 
 model Parameters {
-  uid               Int     @id @unique
+  uid               Int     @id @unique @default(autoincrement())
   request_retention Decimal @default(0.9)
-  maximum_interval  BigInt  @default(36500)
+  maximum_interval  Int     @default(36500)
   easy_bonus        Decimal @default(1.3)
   hard_factor       Decimal @default(1.2)
   w                 String  @default("{\"w\":[1,1,5,-0.5,-0.5,0.2,1.4,-0.12,0.8,2,-0.2,0.2,1]}")
@@ -57,12 +57,12 @@ model Note {
   answer      String        @default("")
   type        String        @default("Word")
   parentId    String?
-  parent      Note?         @relation("SubcategoryOf", fields: [parentId], references: [nid])
-  notes       Note[]        @relation("SubcategoryOf")
   language    String        @default("en_US")
   readed      Boolean       @default(false)
   articleNote ArticleNote[]
   card        Card?
+  parent      Note?         @relation("SubcategoryOf", fields: [parentId], references: [nid])
+  notes       Note[]        @relation("SubcategoryOf")
 }
 
 model Article {
@@ -76,9 +76,9 @@ model Article {
 model ArticleNote {
   aid     Int
   nid     String
-  note    Note    @relation(fields: [nid], references: [nid])
   quote   String
   article Article @relation(fields: [aid], references: [aid])
+  note    Note    @relation(fields: [nid], references: [nid])
 
   @@id([aid, nid])
 }
