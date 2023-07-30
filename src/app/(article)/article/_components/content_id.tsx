@@ -1,5 +1,5 @@
 'use client'
-import Date from '@/components/date';
+import Date from '@/app/(fsrs)/fsrs/_components/date';
 import 'highlight.js/styles/default.css';
 import React, {createRef, useEffect, useRef, useState} from "react";
 import {Card, Note} from "@prisma/client";
@@ -44,6 +44,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
         articleData.language = 'Default'
     }
     const pageTitle = `${articleData.language} - ${articleData.title}`;
+
 
     useEffect(() => {
         const map = props.words
@@ -154,7 +155,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
             <br/>
             <h3>{articleData.id}</h3>
             <hr/>
-            <Date dateString={articleData.date}/>
+            <Date date={articleData.date}/>
             <br/>
             <ExtractContext.Provider value={extractValue}>
                 <CollectSelect/>

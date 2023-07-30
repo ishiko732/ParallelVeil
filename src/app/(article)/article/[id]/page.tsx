@@ -1,12 +1,15 @@
 import Head from "next/head";
 import React from "react";
-// import ArticleClientComponent from "@/components/article/content_id";
 import {getArticleData} from "@/service/article";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article} from "@prisma/client";
 import {createNote} from "@/service/db/note";
 import ArticleClientComponent from "@/app/(article)/article/_components/content_id"
+import {FSRSProvider} from "@/context/fsrsContext";
+import process from "process";
+import {findParamsByUid} from "@/service/db/params";
+import {transParameters} from "@/app/(fsrs)/fsrs/help";
 
 export default async function Page({params}: { params: { id: string } }) {
     const {id} = params
@@ -20,11 +23,13 @@ export default async function Page({params}: { params: { id: string } }) {
     }))
     const words: any = {}
     Array.from(await Promise.all(promiseWords)).forEach(word => words[word.text] = word)
-
+    const uid = Number(process.env.uid)
     return <>
         <Head>
             <title>{params.id}</title>
         </Head>
-        <ArticleClientComponent articleData={articleData} convertToHtml={convertToHtml.toString()} words={words}/>
+        <FSRSProvider uid={uid} p={transParameters(await findParamsByUid({uid}))}>
+            <ArticleClientComponent articleData={articleData} convertToHtml={convertToHtml.toString()} words={words}/>
+        </FSRSProvider>
     </>
 }

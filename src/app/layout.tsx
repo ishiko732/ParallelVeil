@@ -1,7 +1,7 @@
 // import "./globals.css";
 import {Inter} from "next/font/google";
 import {PageProps} from "@/types/react";
-import ThemeProvider from "@/theme-provider";
+import ThemeProvider from "@/context/theme-provider";
 
 const inter = Inter({subsets: ["latin"]});
 

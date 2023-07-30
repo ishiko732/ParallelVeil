@@ -2,7 +2,7 @@ import {Span, Text} from "lowlight/lib/core";
 import {unified} from "unified";
 import remarkParse from "remark-parse";
 import highlight from "remark-highlight.js";
-import {checkAST, regexSymbol} from "@/service/analyzer/index";
+import {regexSymbol} from "@/service/analyzer/index";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import {Literal, Node, Parent} from "unist";
@@ -58,7 +58,7 @@ export async function convertMdToHTML(text: string, collect: Set<string> = new S
         .use(convertParagraph)
         .use(remarkTest, collect)
         .use(highlight)
-        .use(checkAST) //mdastにアクセス
+        // .use(checkAST) //mdastにアクセス
         .use(remarkRehype) // mdast → hast
         .use(rehypeStringify) //  hast → HTML
         // .use(checkAST) //mdastにアクセス

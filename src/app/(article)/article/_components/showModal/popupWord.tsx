@@ -1,14 +1,21 @@
 'use client'
-import {useCallback, useContext, useEffect, useRef, useState, useTransition} from "react";
+import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import ExtractContext from "@/context/extractContext";
 import {Card, Note} from "@prisma/client";
 import ShowModal from "@/components/showModal";
 import {CircularProgress, Divider} from "@mui/material";
-
+import StateChip from "@/app/(fsrs)/fsrs/_components/state";
+import Date from '@/app/(fsrs)/fsrs/_components/date';
+import DSR from "@/app/(fsrs)/fsrs/_components/DSR";
+import {transCard} from "@/app/(fsrs)/fsrs/help";
+import dayjs from "dayjs";
+import FSRSContext from "@/context/fsrsContext";
+import GradeButtons from "@/app/(fsrs)/fsrs/_components/buttons";
+import {Card as fsrsCard, ReviewLog as fsrsLog} from 'ts-fsrs'
 
 export default function PopupWord() {
-    let [isPending, startTransition] = useTransition()
     const props = useContext(ExtractContext)
+    const {f} = useContext(FSRSContext)
     const popupRef = useRef<HTMLDivElement>(null);
     const handleClickOutside = useCallback((event: MouseEvent) => {
         if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
@@ -39,6 +46,10 @@ export default function PopupWord() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [handleClickOutside, props.isPopupVisible]);
+    const handleClick = (gradle: { card: fsrsCard, log: fsrsLog }) => {
+        props.setIsPopupVisible(false);
+        console.log(gradle)
+    }
     return props.isPopupVisible ?
         (<ShowModal x={props.popupPosition.x}
                     y={props.popupPosition.y}
@@ -47,10 +58,23 @@ export default function PopupWord() {
                     }}
                     ref={popupRef}>
             <div>
-                {JSON.stringify(props.currentWordRef.current)}
+                <strong>{props.currentWordRef.current.text}</strong>
+                <div>
+                    {props.currentWordRef.current.quote}
+                </div>
             </div>
             <Divider/>
-            {note ? <div>{JSON.stringify(note)}</div> : <CircularProgress/>}
+            {note && note.card ?
+                <div>
+                    last review:<Date date={note.card.due} format={"YYYY/MM/DD"} inline={true}/>
+                    <StateChip state={note.card.state}/>
+                    <DSR card={transCard(note.card)} now={dayjs()} fsrs={f}/>
+                    <div>
+                        <GradeButtons style={{paddingTop: "10px"}} card={transCard(note.card)} now={dayjs()} fsrs={f}
+                                      handleClick={handleClick}/>
+                    </div>
+                </div>
+                : <CircularProgress/>}
         </ShowModal>)
         : null
 }
