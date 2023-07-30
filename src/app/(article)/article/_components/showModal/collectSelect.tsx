@@ -27,10 +27,9 @@ export default function CollectSelect() {
     }, [handleClickOutside, props.isCollectVisible]);
 
     return props.isCollectVisible ? (
-            <ShowModal popupPosition={props.popupPosition}
+            <ShowModal x={props.popupPosition.x}
+                       y={props.popupPosition.y}
                        style={{
-                           top: props.popupPosition.y,
-                           left: props.popupPosition.x,
                            maxWidth: '500px'
                        }}
                        ref={popupRef}> {props.textRef.current}<AddToPhotosIcon/>

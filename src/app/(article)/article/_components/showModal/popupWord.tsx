@@ -3,6 +3,7 @@ import {useCallback, useContext, useEffect, useRef, useState, useTransition} fro
 import ExtractContext from "@/context/extractContext";
 import {Card, Note} from "@prisma/client";
 import ShowModal from "@/components/showModal";
+import {CircularProgress, Divider} from "@mui/material";
 
 
 export default function PopupWord() {
@@ -39,20 +40,17 @@ export default function PopupWord() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [handleClickOutside, props.isPopupVisible]);
     return props.isPopupVisible ?
-        (<ShowModal popupPosition={props.popupPosition}
+        (<ShowModal x={props.popupPosition.x}
+                    y={props.popupPosition.y}
                     style={{
-                        top: props.popupPosition.y,
-                        left: props.popupPosition.x,
                         maxWidth: '500px'
                     }}
                     ref={popupRef}>
             <div>
                 {JSON.stringify(props.currentWordRef.current)}
             </div>
-            <hr/>
-            <div>
-                {JSON.stringify(note)}
-            </div>
+            <Divider/>
+            {note ? <div>{JSON.stringify(note)}</div> : <CircularProgress/>}
         </ShowModal>)
         : null
 }
