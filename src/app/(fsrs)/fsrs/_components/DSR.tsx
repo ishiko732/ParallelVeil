@@ -10,6 +10,9 @@ export default function DSR({
                                 now,
                                 style
                             }: { card: Card, now: ConfigType, fsrs?: FSRS, style?: CSSProperties }) {
+    if (!card || !now) {
+        return null
+    }
     const D = card.difficulty
     const S = card.stability
     const R = fsrs.get_retrievability(card, dayjs(now).toDate())

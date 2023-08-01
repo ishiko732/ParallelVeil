@@ -1,7 +1,6 @@
-import {Prisma, PrismaClient} from "@prisma/client";
-import {createEmptyCard} from "ts-fsrs";
-
-const prisma = new PrismaClient()
+import {Prisma} from "@prisma/client";
+import prisma from "@/service/db/index";
+import {Card as fsrsCard, createEmptyCard, ReviewLog as fsrsLog} from "ts-fsrs";
 
 export async function createNote(data: Prisma.NoteCreateInput) {
     const {text, type, language} = data
@@ -44,3 +43,46 @@ export async function findNote_by_nid(data: Prisma.NoteWhereUniqueInput) {
     })
 
 }
+
+
+export async function updateNote(data: Prisma.NoteUpdateWithoutNotesInput, _card?: fsrsCard, _log?: fsrsLog) {
+    return prisma.note.update({
+        where: {
+            nid: data.nid as string
+        },
+        data: geneUpdateData(data, _card, _log),
+        include: {
+            card: true
+        }
+    })
+}
+
+function geneUpdateData(data: Prisma.NoteUpdateWithoutNotesInput | any, _card?: fsrsCard, _log?: fsrsLog) {
+    data.card = {}
+    delete data['parentId']
+    delete data['parent']
+    delete data['notes']
+    delete data['articleNote']
+    if (_card) {
+        data.card = {
+            update: {
+                ..._card,
+            }
+        }
+        delete data.card.update['cid']
+        delete data.card.update['nid']
+        delete data.card.update['log']
+        if (_log) {
+            data.card.update.log = {}
+            data.card.update.log.create = {
+                ..._log,
+                grade: _log.rating
+
+            }
+            delete data.card.update.log.create['rating']
+
+        }
+    }
+    return data;
+}
+

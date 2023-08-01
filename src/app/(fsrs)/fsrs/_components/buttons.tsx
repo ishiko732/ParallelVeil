@@ -18,6 +18,9 @@ export default function GradeButtons({
                                      }:
                                          { card: Card, now: ConfigType, fsrs: FSRS, handleClick: (gradle: { card: Card, log: ReviewLog }) => void, groups?: Rating[], style?: CSSProperties }) {
 
+    if (!card) {
+        return null
+    }
     const date = dayjs(now)
     const repeat = fsrs.repeat(card, date.toDate());
     return groups.length > 0 ?
@@ -26,7 +29,7 @@ export default function GradeButtons({
                 groups.map(grade => {
                     const _grade = repeat[String(grade.valueOf()) as indexType];
                     const diff = show_diff_message(_grade.card.due, _grade.card.last_review as Date, true)
-                    console.log(_grade.card, diff)
+                    // console.log(_grade.card, diff)
                     return (
                         <Button key={Rating[grade]}
                                 style={{textTransform: 'capitalize'}}

@@ -1,7 +1,6 @@
 'use server'
-import {Prisma, PrismaClient} from "@prisma/client";
-
-const prisma = new PrismaClient()
+import {Prisma} from "@prisma/client";
+import prisma from "@/service/db/index";
 
 
 export async function findParamsByUid(data: Prisma.ParametersWhereUniqueInput) {

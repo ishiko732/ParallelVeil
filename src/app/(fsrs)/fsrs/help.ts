@@ -1,11 +1,13 @@
 import {Card as prismaCard, Parameters} from "@prisma/client";
 import {Card as fsrsCard, FSRSParameters, generatorParameters} from "ts-fsrs";
+import dayjs from "dayjs";
 
 
 export function transCard(card: prismaCard): fsrsCard {
     return {
         ...card,
-        last_review: card.last_review ? card.last_review : undefined
+        due: dayjs(card.due).toDate(),
+        last_review: card.last_review ? dayjs(card.last_review).toDate() : undefined
     }
 }
 

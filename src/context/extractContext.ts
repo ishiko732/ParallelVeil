@@ -17,7 +17,8 @@ export interface extractInterface {
     isPopupVisible: boolean,
     setIsPopupVisible: Dispatch<SetStateAction<boolean>>,
     popupPosition: point,
-    setPopupPosition: Dispatch<SetStateAction<point>>
+    setPopupPosition: Dispatch<SetStateAction<point>>,
+    handleTransWordClick: (word: currentWordInterface) => void
 }
 
 // @ts-ignore

@@ -48,6 +48,30 @@ export default function PopupWord() {
     }, [handleClickOutside, props.isPopupVisible]);
     const handleClick = (gradle: { card: fsrsCard, log: fsrsLog }) => {
         props.setIsPopupVisible(false);
+        (async () => {
+            const current = props.currentWordRef.current
+
+            const _json = {
+                _note: {...current.entity, readed: true},
+                _card: gradle.card,
+                _log: gradle.log
+            }
+            const data = await fetch(`/api/fsrs/scheduler`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(_json)
+            }).then(res => res.json())
+            const word = {
+                ...current,
+                entity: data
+            }
+            // console.log(data)
+            // console.log(word)
+            props.handleTransWordClick(word)
+            props.currentWordRef.current = word
+        })()
         console.log(gradle)
     }
     return props.isPopupVisible ?

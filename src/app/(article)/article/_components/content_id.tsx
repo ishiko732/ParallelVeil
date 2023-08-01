@@ -3,7 +3,7 @@ import Date from '@/app/(fsrs)/fsrs/_components/date';
 import 'highlight.js/styles/default.css';
 import React, {createRef, useEffect, useRef, useState} from "react";
 import {Card, Note} from "@prisma/client";
-import {State, StateType} from "ts-fsrs";
+import {State} from "ts-fsrs";
 import PopupWord from "@/app/(article)/article/_components/showModal/popupWord";
 import CollectSelect from "@/app/(article)/article/_components/showModal/collectSelect";
 import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
@@ -18,6 +18,7 @@ interface article {
 }
 
 export default function Article(props: { articleData: article, convertToHtml: string, words: { [key: string]: Note & { card: Card | null } } }) {
+    const [data, setData] = useState(props.words)
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [isCollectVisible, setIsCollectVisible] = useState(false);
     const [popupPosition, setPopupPosition] = useState({x: 0, y: 0} as point);
@@ -27,6 +28,26 @@ export default function Article(props: { articleData: article, convertToHtml: st
         quote: ''
     })
     const textRef = useRef('')
+
+    const handleTransWordClick = (word: currentWordInterface) => {
+        // switch (card.state) {
+        //     case State.New:
+        //         card.state = State.Learning
+        //         break;
+        //     case State.Learning:
+        //     case State.Relearning:
+        //         card.state = State.Review
+        //         break;
+        //     case State.Review:
+        //         break;
+        setData(map => {
+            return {
+                ...map,
+                [word.text]: word.entity as (Note & { card: Card })
+            }
+        })
+        console.log(word.entity)
+    }
 
 
     const extractValue: extractInterface = {
@@ -38,6 +59,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
         setIsCollectVisible,
         popupPosition,
         setPopupPosition,
+        handleTransWordClick
     }
     const {articleData, convertToHtml} = props
     if (articleData.language == undefined) {
@@ -47,15 +69,13 @@ export default function Article(props: { articleData: article, convertToHtml: st
 
 
     useEffect(() => {
-        const map = props.words
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
         pvNotes.forEach((pvNote) => {
-            const note = (map[pvNote.innerText.trim()] as Note & { card: Card })
+            const note = (data[pvNote.innerText.trim()] as Note & { card: Card })
             if (note === undefined || note.card === undefined) {
                 return
             }
-            const current = State[note.card.state] as StateType
-            switch (State[current]) {
+            switch (note.card.state) {
                 case State.New:
                     pvNote.className = "note note-new";
                     break
@@ -63,16 +83,12 @@ export default function Article(props: { articleData: article, convertToHtml: st
                 case State.Relearning:
                     pvNote.className = "note note-learn"
                     break
+                default:
+                    // console.log(note)
+                    break
             }
         });
-    }, [props, isPopupVisible, isCollectVisible])
-
-    useEffect(() => {
-        if (currentWordRef.current.entity) {
-            console.log(currentWordRef.current.entity)
-        }
-    }, [currentWordRef])
-
+    }, [props, isPopupVisible, isCollectVisible, data])
 
     const handleClick = (event: MouseEvent) => {
         const vm = event.target as HTMLSpanElement
@@ -83,23 +99,13 @@ export default function Article(props: { articleData: article, convertToHtml: st
         currentWordRef.current = {
             text: note.text,
             quote: vm.parentElement?.parentElement?.innerText || '',
-            nid: note.nid
+            nid: note.nid,
+            entity: note
         }
         setIsPopupVisible(true);
         setPopupPosition({x: vm.offsetWidth + vm.offsetLeft, y: event.clientY});
-        switch (card.state) {
-            case State.New:
-                card.state = State.Learning
-                break;
-            case State.Learning:
-            case State.Relearning:
-                card.state = State.Review
-                break;
-            case State.Review:
-                break;
-
-        }
     }
+
 
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {

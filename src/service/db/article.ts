@@ -1,6 +1,6 @@
-import {Prisma, PrismaClient} from "@prisma/client";
+import {Prisma} from "@prisma/client";
+import prisma from "@/service/db/index";
 
-const prisma = new PrismaClient()
 
 export async function createArticle(data: Prisma.ArticleUncheckedCreateInput) {
     const {aid, link} = data

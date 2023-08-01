@@ -11,6 +11,7 @@
     "dbpull": "npx prisma db pull",
     "dbpush": "npx prisma db push",
     "dbmigrate": "npx prisma migrate dev",
+    "dbmigrate2": "npx prisma migrate diff --from-empty --to-schema-datamodel src/db/schema.prisma --script > src/db/migrations/0_init/migration.sql",
     "client": "npx prisma generate"
   },
   "dependencies": {
