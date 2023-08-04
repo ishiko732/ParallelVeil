@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {downloadFile, getAudioUrls, search} from "@/service/jisho";
+import {downloadFile, getAudioUrls, search} from "@/vendor/dict/jisho";
 import fs from "fs/promises";
 import path from "path";
 
