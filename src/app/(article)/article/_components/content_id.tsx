@@ -8,6 +8,7 @@ import PopupWord from "@/app/(article)/article/_components/showModal/popupWord";
 import CollectSelect from "@/app/(article)/article/_components/showModal/collectSelect";
 import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
 import Head from "next/head";
+import dayjs from "dayjs";
 
 interface article {
     id: string,
@@ -30,23 +31,15 @@ export default function Article(props: { articleData: article, convertToHtml: st
     const textRef = useRef('')
 
     const handleTransWordClick = (word: currentWordInterface) => {
-        // switch (card.state) {
-        //     case State.New:
-        //         card.state = State.Learning
-        //         break;
-        //     case State.Learning:
-        //     case State.Relearning:
-        //         card.state = State.Review
-        //         break;
-        //     case State.Review:
-        //         break;
+        const temp = word.entity as (Note & { card: Card })
+        temp.card.due = dayjs(temp.card.due).toDate()
+        temp.card.last_review = dayjs(temp.card.last_review as Date).toDate()
         setData(map => {
             return {
                 ...map,
-                [word.text]: word.entity as (Note & { card: Card })
+                [word.text]: temp
             }
         })
-        console.log(word.entity)
     }
 
 
@@ -70,6 +63,7 @@ export default function Article(props: { articleData: article, convertToHtml: st
 
     useEffect(() => {
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
+        const now = dayjs().toDate().getTime()
         pvNotes.forEach((pvNote) => {
             const note = (data[pvNote.innerText.trim()] as Note & { card: Card })
             if (note === undefined || note.card === undefined) {
@@ -83,8 +77,10 @@ export default function Article(props: { articleData: article, convertToHtml: st
                 case State.Relearning:
                     pvNote.className = "note note-learn"
                     break
-                default:
-                    // console.log(note)
+                case State.Review:
+                    if (note.card.due.getTime() - now < 0) {
+                        pvNote.className = "note note-recall"
+                    }
                     break
             }
         });

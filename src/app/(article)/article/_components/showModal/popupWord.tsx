@@ -13,6 +13,25 @@ import FSRSContext from "@/context/fsrsContext";
 import GradeButtons from "@/app/(fsrs)/fsrs/_components/buttons";
 import {Card as fsrsCard, ReviewLog as fsrsLog} from 'ts-fsrs'
 
+
+export async function getNote(nid: string) {
+    return fetch(`/api/note/${nid}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(res => res.json())
+}
+
+export async function getAnswers(query: string, page: number = 1) {
+    return fetch(`/api/jisho?query=${query}&page=${page}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(res => res.json())
+}
+
 export default function PopupWord() {
     const props = useContext(ExtractContext)
     const {f} = useContext(FSRSContext)
@@ -23,18 +42,16 @@ export default function PopupWord() {
         }
     }, [props]);
     const [note, setNote] = useState<Note & { card: Card }>()
-
+    const [answers, setAnswers] = useState()
+    const [page, setPage] = useState(1)
     useEffect(() => {
         if (props.isPopupVisible) {
             (async () => {
                 const current = props.currentWordRef.current
-                const data = await fetch(`/api/note/${current.nid}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }).then(res => res.json())
-                setNote(data)
+                if (current.nid) {
+                    getNote(current.nid).then(data => setNote(data))
+                    getAnswers(current.text, page).then(answers => setAnswers(answers))
+                }
             })()
             document.addEventListener('mousedown', handleClickOutside);
         } else {
@@ -90,7 +107,7 @@ export default function PopupWord() {
             <Divider/>
             {note && note.card ?
                 <div>
-                    last review:<Date date={note.card.due} format={"YYYY/MM/DD"} inline={true}/>
+                    last review:<Date date={note.card.due} inline={true}/>
                     <StateChip state={note.card.state}/>
                     <DSR card={transCard(note.card)} now={dayjs()} fsrs={f}/>
                     <div>
