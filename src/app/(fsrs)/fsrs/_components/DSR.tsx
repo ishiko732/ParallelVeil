@@ -8,18 +8,23 @@ export default function DSR({
                                 fsrs = new FSRS(),
                                 card,
                                 now,
-                                style
-                            }: { card: Card, now: ConfigType, fsrs?: FSRS, style?: CSSProperties }) {
+                                style,
+                                children
+                            }: { card: Card, now: ConfigType, fsrs?: FSRS, style?: CSSProperties, children?: React.ReactNode }) {
     if (!card || !now) {
         return null
     }
     const D = card.difficulty
     const S = card.stability
-    const R = fsrs.get_retrievability(card, dayjs(now).toDate())
-    return R ? <div style={{...style}}>
-        <p>D:{`${D.toFixed(2)}`}</p>
-        <p>S:{`${S.toFixed(2)}`}</p>
-        <p>R:{`${R}`}</p>
-    </div> : null
+    const now_date = dayjs(now).toDate()
+    const R = fsrs.get_retrievability(card, now_date)
+    return R && card.due.getTime() - now_date.getTime() < 0 ?
+        <div style={{...style}}>
+            <div>D:{`${D.toFixed(2)}`}</div>
+            <div>S:{`${S.toFixed(2)}`}</div>
+            <div>R:{`${R}`}</div>
+            {children}
+        </div>
+        : null
 
 }

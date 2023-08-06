@@ -17,6 +17,7 @@ const ShowModal = styled.div<showModalProps>`
   padding: 10px;
   word-break: keep-all;
   overflow: auto;
+  max-height: 250px;
 ... style
 `;
 

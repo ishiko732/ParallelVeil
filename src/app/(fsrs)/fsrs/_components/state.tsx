@@ -2,15 +2,15 @@ import {State} from "ts-fsrs";
 import styled from 'styled-components';
 import {CSSProperties} from "react";
 
-export default function StateChip({state, style}: { state: State, style?: CSSProperties }) {
+export default function StateChip({state, style, value}: { state: State, value?: string, style?: CSSProperties }) {
     switch (state) {
         case State.New:
-            return <Chip color='#dae3fc' style={{...style}}>{`${State[state]}`}</Chip>
+            return <Chip color='#dae3fc' style={{...style}}>{value ? value : `${State[state]}`}</Chip>
         case State.Learning:
         case State.Relearning:
-            return <Chip color='#97f7ad' style={{...style}}>{`${State[state]}`}</Chip>
+            return <Chip color='#97f7ad' style={{...style}}>{value ? value : `${State[state]}`}</Chip>
         case State.Review:
-            return <Chip color='#f59b80' style={{...style}}>{`${State[state]}`}</Chip>
+            return <Chip color='#f59b80' style={{...style}}>{value ? value : `${State[state]}`}</Chip>
     }
 }
 

@@ -22,23 +22,28 @@ hr {
 }
 
 .pv-content + .pv-content {
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .pv-content span + span {
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .pv-content + strong {
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 strong + .pv-content {
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .pv-content + img {
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .note {
