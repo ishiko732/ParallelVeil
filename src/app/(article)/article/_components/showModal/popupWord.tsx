@@ -12,6 +12,7 @@ import FSRSContext from "@/context/fsrsContext";
 import GradeButtons from "@/app/(fsrs)/fsrs/_components/buttons";
 import {Card as fsrsCard, Rating, ReviewLog as fsrsLog, State} from 'ts-fsrs'
 import QuoteContainer from "@/app/(article)/article/_components/quote";
+import GPT from "@/app/(article)/article/_components/gpt";
 
 
 export async function getNote(nid: string) {
@@ -164,7 +165,7 @@ export default function PopupWord() {
                             {jisho ? jisho.map((answer, index) => <p
                                 key={`jisho-answer${index}`}>{JSON.stringify(answer)}</p>) : <CircularProgress/>}
                         </div>
-
+                        <GPT/>
                     </div>
                 </>
 

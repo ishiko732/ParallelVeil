@@ -2,6 +2,10 @@ import {NextRequest, NextResponse} from "next/server";
 import {openai, proxyInitConfig} from "@/vendor/openai";
 import {OpenAIStream} from "@/vendor/openai/openAIStream";
 import prompt from "@/vendor/openai/prompt";
+// Use Next.js edge runtime
+export const config = {
+    runtime: 'edge',
+}
 
 export async function GET(request: NextRequest) {
     const response = await openai.listModels(proxyInitConfig);
@@ -9,11 +13,20 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    const {text, language, origin, phrase} = await request.json()
-    if (text == null || language == null || origin == null || phrase == null) {
-        NextResponse.json(null, {status: 400})
+    let user_query = ""
+    try {
+        const data = await request.json()
+        const {query, language, origin, phrase} = data
+        if (query == null || language == null || origin == null || phrase == null) {
+            NextResponse.json(null, {status: 400})
+        }
+        user_query = JSON.stringify({query, language, origin, phrase})
+    } catch (e) {
+        const {searchParams} = new URL(request.url)
+        const prompt2 = searchParams.get('prompt2')
+        user_query = prompt2!!
     }
-    const user_query = JSON.stringify({text, language, origin, phrase})
+
     const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
         stream: true,
@@ -29,7 +42,6 @@ export async function POST(request: NextRequest) {
         ...proxyInitConfig,
         responseType: "stream"
     });
-
     const stream = await OpenAIStream(response);
-    return new Response(stream);
+    return new Response(stream, {headers: {'Content-Type': 'text/event-stream', 'Connection': 'keep-alive'}});
 }
