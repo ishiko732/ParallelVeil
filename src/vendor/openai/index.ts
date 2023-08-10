@@ -1,10 +1,7 @@
 import {Configuration, OpenAIApi} from 'openai'
 import process from "process";
 
-// Use Next.js edge runtime
-export const config = {
-    runtime: 'edge',
-}
+export const runtime = 'edge'
 export const openAIConfig = new Configuration({
     apiKey: process.env.secret_key!,
 

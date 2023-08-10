@@ -3,9 +3,7 @@ import {openai, proxyInitConfig} from "@/vendor/openai";
 import {OpenAIStream} from "@/vendor/openai/openAIStream";
 import prompt from "@/vendor/openai/prompt";
 // Use Next.js edge runtime
-export const config = {
-    runtime: 'edge',
-}
+export const runtime = 'edge'
 
 export async function GET(request: NextRequest) {
     const response = await openai.listModels(proxyInitConfig);
