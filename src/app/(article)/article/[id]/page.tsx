@@ -10,6 +10,7 @@ import {FSRSProvider} from "@/context/fsrsContext";
 import process from "process";
 import {findParamsByUid} from "@/service/db/params";
 import {transParameters} from "@/app/(fsrs)/fsrs/help";
+import {Metadata, ResolvingMetadata} from 'next'
 
 export default async function Page({params}: { params: { id: string } }) {
     const {id} = params
@@ -32,4 +33,32 @@ export default async function Page({params}: { params: { id: string } }) {
             <ArticleClientComponent articleData={articleData} convertToHtml={convertToHtml.toString()} words={words}/>
         </FSRSProvider>
     </>
+}
+
+type Props = {
+    params: { id: string }
+    searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata(
+    {params, searchParams}: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    // read route params
+    const id = params.id
+
+    // fetch data
+    const articleData = await getArticleData(id);
+
+    // optionally access and extend (rather than replace) parent metadata
+    const previousImages = (await parent).openGraph?.images || []
+
+    return {
+        title: articleData.title,
+        description: articleData.text.substring(0, 300),
+
+        openGraph: {
+            images: ['/some-specific-page-image.jpg', ...previousImages],
+        },
+    }
 }
