@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import {getArticleData} from "@/service/article";
+import {getArticleData} from "@/app/(article)/service/article";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article} from "@prisma/client";

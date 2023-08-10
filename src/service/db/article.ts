@@ -1,5 +1,6 @@
 import {Prisma} from "@prisma/client";
 import prisma from "@/service/db/index";
+import {loggerDebug} from "@/config/pinoConfig";
 
 
 export async function createArticle(data: Prisma.ArticleUncheckedCreateInput) {
@@ -9,7 +10,7 @@ export async function createArticle(data: Prisma.ArticleUncheckedCreateInput) {
     })
 
     if (existingArticle) {
-        console.log('article already exists')
+        loggerDebug('article already exists')
         return existingArticle
     }
     return prisma.article.create({
@@ -22,13 +23,13 @@ export async function createArticle(data: Prisma.ArticleUncheckedCreateInput) {
 export async function updateArticle(data: Prisma.ArticleUncheckedUpdateInput) {
     const {aid, link, read, position} = data
     if (aid === null) {
-        console.log('note not exists')
+        loggerDebug('note not exists')
     }
     const existingArticle = await prisma.article.findFirst({
         where: {aid: aid as number}
     })
     if (!existingArticle) {
-        console.log('article no exists')
+        loggerDebug('article no exists')
         return existingArticle
     }
     return prisma.article.update({

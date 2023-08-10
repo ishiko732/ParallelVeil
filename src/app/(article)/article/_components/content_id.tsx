@@ -9,6 +9,7 @@ import CollectSelect from "@/app/(article)/article/_components/showModal/collect
 import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
 import Head from "next/head";
 import dayjs from "dayjs";
+import {loggerDebug} from "@/config/pinoConfig";
 
 interface article {
     id: string,
@@ -18,7 +19,11 @@ interface article {
     text: string
 }
 
-export default function Article(props: { articleData: article, convertToHtml: string, words: { [key: string]: Note & { card: Card | null } } }) {
+export default function Article(props: {
+    articleData: article,
+    convertToHtml: string,
+    words: { [key: string]: Note & { card: Card | null } }
+}) {
     const [data, setData] = useState(props.words)
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [isCollectVisible, setIsCollectVisible] = useState(false);
@@ -88,7 +93,8 @@ export default function Article(props: { articleData: article, convertToHtml: st
 
     const handleClick = (event: MouseEvent) => {
         const vm = event.target as HTMLSpanElement
-        console.log(vm.innerText, vm.parentElement?.parentElement?.innerText);
+        loggerDebug("selectText", {caller: vm.innerText})
+        loggerDebug("selectPhrase", {caller: vm.parentElement?.parentElement?.innerText})
         textRef.current = vm.innerText.trim() as string
         const note = props.words[textRef.current] as Note & { card: Card }
         const card = note.card

@@ -56,12 +56,6 @@ export function getAllArticleIds(id?: string) {
 }
 
 export async function getArticleData(id: string) {
-    // if (fs.lstatSync(path.join(ArticlesDirectory, id)).isDirectory()) {
-    //     return {
-    //         id,
-    //         directory: true
-    //     }
-    // }
     const fullPath = path.join(ArticlesDirectory, `${id}.md`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
 
