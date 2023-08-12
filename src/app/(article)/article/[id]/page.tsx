@@ -26,9 +26,6 @@ export default async function Page({params}: { params: { id: string } }) {
     Array.from(await Promise.all(promiseWords)).forEach(word => words[word.text] = word)
     const uid = Number(process.env.uid)
     return <>
-        <Head>
-            <title>{params.id}</title>
-        </Head>
         <FSRSProvider uid={uid} p={transParameters(await findParamsByUid({uid}))}>
             <ArticleClientComponent articleData={articleData} convertToHtml={convertToHtml.toString()} words={words}/>
         </FSRSProvider>

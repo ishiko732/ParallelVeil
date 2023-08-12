@@ -4,7 +4,6 @@ import process from "process";
 export const runtime = 'edge'
 export const openAIConfig = new Configuration({
     apiKey: process.env.secret_key!,
-
 })
 
 export const openai = new OpenAIApi(openAIConfig)
