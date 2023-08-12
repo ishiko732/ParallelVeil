@@ -1,18 +1,18 @@
-import {Span, Text} from "lowlight/lib/core";
+import {Span, Text} from 'lowlight/lib/core';
 import {unified} from "unified";
 import remarkParse from "remark-parse";
 import highlight from "remark-highlight.js";
 import {regexSymbol} from "@/service/analyzer/index";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
-import {Literal, Node, Parent} from "unist";
 import {visit} from "unist-util-visit";
 import splitWords from "./en_US";
+import type {Node} from "unified/lib";
 
 
 export function convertParagraph() {
     return (tree: Node) => {
-        visit(tree, 'paragraph', (node: Parent) => {
+        visit(tree, 'paragraph', (node: Node) => {
             let {data} = node
             node.type = 'element'
             if (!data) {
@@ -69,7 +69,7 @@ export async function convertMdToHTML(text: string, collect: Set<string> = new S
 function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) {
     return (tree: Node) => {
         visit(tree, (node) => {
-            let {type, data, value} = node as Literal
+            let {type, data, value} = node as Node & { value?: string }
             if (!data) {
                 data = {}
                 node.data = data
