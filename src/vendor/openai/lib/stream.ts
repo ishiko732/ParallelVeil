@@ -1,12 +1,7 @@
-import {createParser, ParsedEvent, ReconnectInterval,} from "eventsource-parser";
-import {AxiosResponse} from "axios";
-import {CreateChatCompletionResponse} from "openai";
+import {createParser, ParsedEvent, ReconnectInterval} from "eventsource-parser";
+import {Response} from "node-fetch";
 
-/**
- * see:https://github.com/wimluk/public-lib/blob/main/tutorials/How%20to%20Stream%20Real-Time%20OpenAI%20API%20Responses/src/utils/openAIStream.ts
- */
-
-export async function OpenAIStream(res: AxiosResponse<CreateChatCompletionResponse, any>) {
+export default function openAIStream(res: Response) {
     let counter = 0;
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
@@ -42,7 +37,7 @@ export async function OpenAIStream(res: AxiosResponse<CreateChatCompletionRespon
             // this ensures we properly read chunks and invoke an event for each SSE event stream
             const parser = createParser(onParse);
             // https://web.dev/streams/#asynchronous-iteration
-            for await (const chunk of res.data as any) {
+            for await (const chunk of res.body as any) {
                 parser.feed(decoder.decode(chunk));
             }
         },
