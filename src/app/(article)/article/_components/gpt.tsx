@@ -1,20 +1,14 @@
 'use client'
 import React from "react";
-import useChatStream from "@magicul/react-chat-stream";
+import {useOpenAiStream} from "@/vendor/openai/lib/useTextStream";
 
 
-export default function GPT() {
+export default function GPT({word, phrase}: { word: string, phrase: string }) {
 
-    const {messages, input, handleInputChange, handleSubmit} = useChatStream({
-        options: {
-            url: '/api/openai',
-            method: 'POST',
-        },
-        method: {
-            type: 'query',
-            key: 'prompt2',
-        },
-    });
+    const {messages, inputRef, handleSubmit, loading} = useOpenAiStream(
+        '/api/openai', {
+            method: "POST"
+        });
 
     return (
         <div>
@@ -25,8 +19,14 @@ export default function GPT() {
                     </p>
                 </div>
             ))}
-            <form onSubmit={handleSubmit}>
-                <input type="text" onChange={handleInputChange} value={input}/>
+            {loading ? <p>response...</p> : null}
+            <form onSubmit={(e => handleSubmit(e, JSON.stringify({
+                language: "en-us",
+                origin: "zh-cn",
+                query: inputRef.current?.value || word,
+                phrase: phrase
+            })))}>
+                <input type="text" ref={inputRef}/>
                 <button type="submit">Send</button>
             </form>
         </div>

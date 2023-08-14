@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@magicul/react-chat-stream':
-    specifier: ^0.1.1
-    version: 0.1.1(react@18.2.0)
   autoprefixer:
     specifier: 10.4.14
     version: 10.4.14(postcss@8.4.24)
@@ -116,6 +113,9 @@ dependencies:
   unist-util-visit:
     specifier: ^5.0.0
     version: 5.0.0
+  uuid:
+    specifier: ^9.0.0
+    version: 9.0.0
 
 devDependencies:
   '@emotion/react':
@@ -154,6 +154,9 @@ devDependencies:
   '@types/superagent':
     specifier: ^4.1.18
     version: 4.1.18
+  '@types/uuid':
+    specifier: ^9.0.2
+    version: 9.0.2
   prisma:
     specifier: ^4.15.0
     version: 4.15.0
@@ -1699,16 +1702,6 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: false
 
-  /@magicul/react-chat-stream@0.1.1(react@18.2.0):
-    resolution: {integrity: sha512-mCohrkDAaQ15a9aBHuzDDixy7AAMW9gAWGZ0Iri6GbgC/XdZ44KhVb/0hCos0WNQPqQ9fV4kP0RMpmFtg492gA==}
-    peerDependencies:
-      react: '>=17.0.2'
-    dependencies:
-      '@types/uuid': 9.0.2
-      react: 18.2.0
-      uuid: 9.0.0
-    dev: false
-
   /@mapbox/hast-util-table-cell-style@0.2.0:
     resolution: {integrity: sha512-gqaTIGC8My3LVSnU38IwjHVKJC94HSonjvFHDk8/aSrApL8v4uWgm8zJkK7MJIIbHuNOr/+Mv2KkQKcxs6LEZA==}
     engines: {node: '>=12'}
@@ -2190,7 +2183,7 @@ packages:
 
   /@types/uuid@9.0.2:
     resolution: {integrity: sha512-kNnC1GFBLuhImSnV7w4njQkUiJi0ZXUycu1rUaouPqiKlXkh77JKgdRnTAp1x5eBwcIwbtI+3otwzuIDEuDoxQ==}
-    dev: false
+    dev: true
 
   /@typescript-eslint/parser@5.62.0(eslint@8.42.0)(typescript@5.1.3):
     resolution: {integrity: sha512-VlJEV0fOQ7BExOsHYAGrgbEiZoi8D+Bl2+f6V2RrXerRSylnp+ZBHmPvaIa8cz0Ajx7WO7Z5RqfgYg7ED1nRhA==}

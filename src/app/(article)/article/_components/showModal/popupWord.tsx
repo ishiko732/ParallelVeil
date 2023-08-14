@@ -165,7 +165,7 @@ export default function PopupWord() {
                             {jisho ? jisho.map((answer, index) => <p
                                 key={`jisho-answer${index}`}>{JSON.stringify(answer)}</p>) : <CircularProgress/>}
                         </div>
-                        <GPT/>
+                        <GPT word={props.currentWordRef.current.text} phrase={props.currentWordRef.current.quote}/>
                     </div>
                 </>
 
