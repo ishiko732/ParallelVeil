@@ -161,7 +161,7 @@ export default function Article(props: {
                 <title>{pageTitle}</title>
             </Head>
             <br/>
-            <h3>{articleData.id}</h3>
+            <h3>{articleData.title}</h3>
             <hr/>
             <Date date={articleData.date}/>
             <br/>

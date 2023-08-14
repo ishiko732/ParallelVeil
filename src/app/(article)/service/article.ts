@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import {ArticlesDirectory} from "@/config/article";
+import {ArticlesDirectory, CollectDirectory} from "@/config/article";
+import {loggerDebug} from "@/config/pinoConfig";
 
 interface markdownTag {
     title: string,
@@ -45,28 +46,36 @@ export function getSortedArticlesData() {
 }
 
 export function getAllArticleIds(id?: string) {
-    const fileNames = fs.readdirSync(id ? path.join(ArticlesDirectory, id) : ArticlesDirectory);
+    const dir = id ? path.join(ArticlesDirectory, id) : ArticlesDirectory
+    const fileNames = fs.readdirSync(dir);
     return fileNames.map((fileName) => {
+        const _id = fileName.replace(/\.md$/, '')
+        const _path = path.join(dir, _id).replace(CollectDirectory, "")
         return {
             params: {
-                id: fileName.replace(/\.md$/, ''),
+                id: _id,
+                path: _path,
             }
         };
     });
 }
 
 export async function getArticleData(id: string) {
-    const fullPath = path.join(ArticlesDirectory, `${id}.md`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    loggerDebug("artcileId", {id})
+    try {
+        const fullPath = path.join(ArticlesDirectory, `${id}.md`);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const matterResult = matter(fileContents);
+        return {
+            id,
+            text: matterResult.content,
+            ...(matterResult.data as markdownTag),
+        };
+    } catch {
+        return getAllArticleIds(id)
+    }
 
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents);
 
-    return {
-        id,
-        text: matterResult.content,
-        ...(matterResult.data as markdownTag),
-    };
 }
 
 

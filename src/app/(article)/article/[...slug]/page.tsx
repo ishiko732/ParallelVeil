@@ -1,4 +1,3 @@
-import Head from "next/head";
 import React from "react";
 import {getArticleData} from "@/app/(article)/service/article";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
@@ -11,12 +10,22 @@ import process from "process";
 import {findParamsByUid} from "@/service/db/params";
 import {transParameters} from "@/app/(fsrs)/fsrs/help";
 import {Metadata, ResolvingMetadata} from 'next'
+import path from "path";
+import fs from "fs";
+import {ArticlesDirectory} from "@/config/article";
+import ArticleLink from "@/app/(article)/article/_components/articleLink";
+import {loggerDebug} from "@/config/pinoConfig";
 
-export default async function Page({params}: { params: { id: string } }) {
-    const {id} = params
-    const articleData = await getArticleData(id);
+export default async function Page({params}: { params: { slug: string[] } }) {
+    const {slug} = params
+    const _id = path.join(...slug)
+    const articleData = await getArticleData(_id);
+    if (Array.isArray(articleData)) {
+        return articleData.map((articleData) => <ArticleLink key={articleData.params.id}
+                                                             articleData={articleData.params}/>)
+    }
     const collect = new Set<string>();
-    const promiseAll = [convertMdToHTML(articleData.text, collect), createArticle({link: id})]
+    const promiseAll = [convertMdToHTML(articleData.text, collect), createArticle({link: _id})]
     const [convertToHtml, dbArticle]: (string | Article)[] = await Promise.all(promiseAll)
     // const aid = (dbArticle as Article).aid
     const promiseWords = Array.from(collect).map(word => createNote({
@@ -33,7 +42,7 @@ export default async function Page({params}: { params: { id: string } }) {
 }
 
 type Props = {
-    params: { id: string }
+    params: { slug: string[] }
     searchParams: { [key: string]: string | string[] | undefined }
 }
 
@@ -42,20 +51,19 @@ export async function generateMetadata(
     parent: ResolvingMetadata
 ): Promise<Metadata> {
     // read route params
-    const id = params.id
-
+    const _id = path.join(...params.slug)
+    loggerDebug("metadataIds", params.slug)
     // fetch data
-    const articleData = await getArticleData(id);
-
-    // optionally access and extend (rather than replace) parent metadata
-    const previousImages = (await parent).openGraph?.images || []
-
+    const articleData = await getArticleData(_id);
+    loggerDebug("metaData", {articleData,"test":Array.isArray(articleData)})
+    if (Array.isArray(articleData)) {
+        return {
+            title: `Parallel Veil - Article`
+        }
+    }
     return {
         title: articleData.title,
         description: articleData.text.substring(0, 300),
 
-        openGraph: {
-            images: ['/some-specific-page-image.jpg', ...previousImages],
-        },
     }
 }
