@@ -74,8 +74,6 @@ export async function getArticleData(id: string) {
     } catch {
         return getAllArticleIds(id)
     }
-
-
 }
 
 

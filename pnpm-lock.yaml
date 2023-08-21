@@ -154,6 +154,9 @@ devDependencies:
   '@types/superagent':
     specifier: ^4.1.18
     version: 4.1.18
+  '@types/unist':
+    specifier: ^3.0.0
+    version: 3.0.0
   '@types/uuid':
     specifier: ^9.0.2
     version: 9.0.2
@@ -2179,7 +2182,6 @@ packages:
 
   /@types/unist@3.0.0:
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
-    dev: false
 
   /@types/uuid@9.0.2:
     resolution: {integrity: sha512-kNnC1GFBLuhImSnV7w4njQkUiJi0ZXUycu1rUaouPqiKlXkh77JKgdRnTAp1x5eBwcIwbtI+3otwzuIDEuDoxQ==}
