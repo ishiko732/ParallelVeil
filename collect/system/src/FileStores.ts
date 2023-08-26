@@ -1,13 +1,13 @@
-import {watch_path} from "./app";
 import * as pathNode from 'path'
 import {getMdData} from "./ProcessMd";
 
 type FileType = 'file' | 'folder'
 
-interface FileValue {
+export interface FileValue {
     name: string,
     path: string
     route: string,
+    file: boolean,
     value?: { [key: string]: any },
 
     [key: string]: any; // 添加字符串索引签名
@@ -17,17 +17,40 @@ export interface FileTree {
     [key: string]: FileValue | FileTree
 }
 
+export interface FilePath {
+    name: string,
+    route: string
+    file: boolean
+}
+
 
 export class FileStores {
     tree: FileTree = {}
+    watchPath: string
 
-
-    public getKeys(path: string[]): string[] {
-        let message = this.getMessage(path);
-        return message ? Object.keys(message) : [];
+    constructor(watchPath: string) {
+        this.watchPath = watchPath
     }
 
-    public getMessage(path: string[]) {
+    public getPaths(path: string[]): FilePath[] {
+        let message = this.getMessage(path);
+        if (message.file) {
+            return []
+        }
+        let keys = Object.keys(message)
+        let ret: FilePath[] = []
+        for (let i = 0; i < keys.length; i++) {
+            let msg = message[keys[i]]
+            ret.push({
+                name: keys[i],
+                route: msg.route as string,
+                file: !!msg.file
+            })
+        }
+        return ret
+    }
+
+    public getMessage(path: string[]): FileTree {
         let exec = this.tree;
         for (let i = 0; exec && i < path.length; i++) {
             if (path[i] === '') {
@@ -39,10 +62,6 @@ export class FileStores {
     }
 
 
-    private get watchPath() {
-        return watch_path.charAt(watch_path.length - 1) !== '/' ? `${watch_path}/` : watch_path
-    }
-
     addFolder(path: string) {
         this._add(path, 'folder')
     }
@@ -52,7 +71,8 @@ export class FileStores {
     }
 
     delete(path: string) {
-        let paths = path.replace(this.watchPath, "").split('/');
+        let routeFromPath = pathNode.relative(this.watchPath, path)
+        let paths = routeFromPath.split(pathNode.sep);
         let exec = this.tree;
         for (let i = 0; exec && i < paths.length - 1; i++) {
             exec = exec[paths[i]];
@@ -67,7 +87,8 @@ export class FileStores {
     }
 
     private async _add(path: string, type: FileType) {
-        let paths = path.replace(this.watchPath, "").split('/');
+        let routeFromPath = pathNode.relative(this.watchPath, path)
+        let paths = routeFromPath.split(pathNode.sep);
         let exec: FileTree = this.tree;
 
         for (let i = 0; i < paths.length; i++) {
@@ -76,8 +97,9 @@ export class FileStores {
             } else if (i === paths.length - 1 && type == 'file') {
                 exec[paths[i]] = {
                     name: paths[i],
-                    route: path.replace(this.watchPath, ""),
-                    path: path,
+                    route: routeFromPath.replace(pathNode.sep, '/'),
+                    path: routeFromPath,
+                    file: true
                 }
                 let ext = pathNode.extname(path);
                 if (ext === ".md") {
@@ -89,7 +111,3 @@ export class FileStores {
         }
     }
 }
-
-const fileStores: FileStores = new FileStores();
-
-export default fileStores;
