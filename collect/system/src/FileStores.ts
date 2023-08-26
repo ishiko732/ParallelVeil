@@ -34,7 +34,7 @@ export class FileStores {
 
     public getPaths(path: string[]): FilePath[] {
         let message = this.getMessage(path);
-        if (message.file) {
+        if (!message || message.file) {
             return []
         }
         let keys = Object.keys(message)
@@ -43,7 +43,7 @@ export class FileStores {
             let msg = message[keys[i]]
             ret.push({
                 name: keys[i],
-                route: msg.route as string,
+                route: (msg.route as string | undefined) || (path.join("/") + keys[i]),
                 file: !!msg.file
             })
         }
