@@ -1,12 +1,8 @@
 import Link from "next/link";
+import {FilePath} from "@@/collect/system/src/FileStores";
 
-interface articleData {
-    id: string
-    path: string
-}
 
-export default function ArticleLink(params: { articleData: articleData }) {
-    const {articleData} = params
-    return <div key={articleData.id}><Link href={articleData.path}>{articleData.id}</Link></div>
-
+export default function ArticleLink(params: { articlePath: FilePath }) {
+    const {articlePath} = params
+    return <div key={articlePath.name}><Link href={`article/${articlePath.route}`}>{articlePath.name}</Link></div>
 }

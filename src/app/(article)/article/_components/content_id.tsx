@@ -10,6 +10,7 @@ import ExtractContext, {currentWordInterface, extractInterface} from "@/context/
 import Head from "next/head";
 import dayjs from "dayjs";
 import {loggerDebug} from "@/config/pinoConfig";
+import {articleData} from "@/app/(article)/service/article_watch";
 
 interface article {
     id: string,
@@ -20,7 +21,7 @@ interface article {
 }
 
 export default function Article(props: {
-    articleData: article,
+    articleData: articleData,
     convertToHtml: string,
     words: { [key: string]: Note & { card: Card | null } }
 }) {

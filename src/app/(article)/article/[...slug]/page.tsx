@@ -1,5 +1,4 @@
 import React from "react";
-import {getArticleData} from "@/app/(article)/service/article";
 import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article} from "@prisma/client";
@@ -9,21 +8,18 @@ import {FSRSProvider} from "@/context/fsrsContext";
 import process from "process";
 import {findParamsByUid} from "@/service/db/params";
 import {transParameters} from "@/app/(fsrs)/fsrs/help";
-import {Metadata, ResolvingMetadata} from 'next'
-import path from "path";
-import fs from "fs";
-import {ArticlesDirectory} from "@/config/article";
-import ArticleLink from "@/app/(article)/article/_components/articleLink";
-import {loggerDebug} from "@/config/pinoConfig";
+import {Metadata} from 'next'
+import {articleData, getArticleData, getArticlePaths} from "@/app/(article)/service/article_watch";
+import ArticlePaths from "@/app/(article)/article/_components/articlePaths";
 
 export default async function Page({params}: { params: { slug: string[] } }) {
     const {slug} = params
-    const _id = path.join(...slug)
-    const articleData = await getArticleData(_id);
-    if (Array.isArray(articleData)) {
-        return articleData.map((articleData) => <ArticleLink key={articleData.params.id}
-                                                             articleData={articleData.params}/>)
+    const _id = slug.join("/")
+    const fileValue = await getArticleData(slug);
+    if (Array.isArray(fileValue) || !fileValue.file) {
+        return <ArticlePaths articlePaths={await getArticlePaths(slug)}/>
     }
+    const articleData = fileValue.value as articleData
     const collect = new Set<string>();
     const promiseAll = [convertMdToHTML(articleData.text, collect), createArticle({link: _id})]
     const [convertToHtml, dbArticle]: (string | Article)[] = await Promise.all(promiseAll)
@@ -48,19 +44,14 @@ type Props = {
 
 export async function generateMetadata(
     {params, searchParams}: Props,
-    parent: ResolvingMetadata
 ): Promise<Metadata> {
-    // read route params
-    const _id = path.join(...params.slug)
-    loggerDebug("metadataIds", params.slug)
-    // fetch data
-    const articleData = await getArticleData(_id);
-    loggerDebug("metaData", {articleData,"test":Array.isArray(articleData)})
-    if (Array.isArray(articleData)) {
+    const fileValue = await getArticleData(params.slug);
+    if (Array.isArray(fileValue) || !fileValue.file) {
         return {
-            title: `Parallel Veil - Article`
+            title: `Parallel Veil - ${params.slug.join('/') || 'Article'}`
         }
     }
+    const articleData = fileValue.value as articleData
     return {
         title: articleData.title,
         description: articleData.text.substring(0, 300),
