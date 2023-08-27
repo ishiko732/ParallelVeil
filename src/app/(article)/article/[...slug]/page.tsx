@@ -11,11 +11,16 @@ import {transParameters} from "@/app/(fsrs)/fsrs/help";
 import {Metadata} from 'next'
 import {articleData, getArticleData, getArticlePaths} from "@/app/(article)/service/article_watch";
 import ArticlePaths from "@/app/(article)/article/_components/articlePaths";
+import {notFound} from "next/navigation";
+
 
 export default async function Page({params}: { params: { slug: string[] } }) {
     const {slug} = params
     const _id = slug.join("/")
     const fileValue = await getArticleData(slug);
+    if (fileValue.err) {
+        notFound()
+    }
     if (Array.isArray(fileValue) || !fileValue.file) {
         return <ArticlePaths articlePaths={await getArticlePaths(slug)}/>
     }
@@ -46,6 +51,11 @@ export async function generateMetadata(
     {params, searchParams}: Props,
 ): Promise<Metadata> {
     const fileValue = await getArticleData(params.slug);
+    if (fileValue.err) {
+        return {
+            title: 'Parallel Veil'
+        }
+    }
     if (Array.isArray(fileValue) || !fileValue.file) {
         return {
             title: `Parallel Veil - ${params.slug.join('/') || 'Article'}`

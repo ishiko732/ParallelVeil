@@ -12,7 +12,9 @@ export async function getArticleData(path: string[]) {
         headers: {
             'value': '1'
         }
-    }).then(res => res.json()) as Promise<FileValue>
+    }).then(res => res.json()).catch(err => {
+        return {err: 404}
+    }) as Promise<FileValue>
 }
 
 export interface articleData {
