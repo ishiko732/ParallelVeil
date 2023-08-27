@@ -3,7 +3,7 @@ import {convertMdToHTML} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article} from "@prisma/client";
 import {createNote} from "@/service/db/note";
-import ArticleClientComponent from "@/app/(article)/article/_components/content_id"
+import ArticleClientComponent from "@/app/(article)/article/_components/articleContent"
 import {FSRSProvider} from "@/context/fsrsContext";
 import process from "process";
 import {findParamsByUid} from "@/service/db/params";
@@ -62,8 +62,11 @@ export async function generateMetadata(
         }
     }
     const articleData = fileValue.value as articleData
+    if (articleData.language == undefined) {
+        articleData.language = 'Default'
+    }
     return {
-        title: articleData.title,
+        title: `${articleData.title}(${articleData.language})`,
         description: articleData.text.substring(0, 300),
 
     }

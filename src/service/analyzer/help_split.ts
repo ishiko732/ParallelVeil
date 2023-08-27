@@ -54,6 +54,7 @@ function addText(value: string): Text {
 
 export async function convertMdToHTML(text: string, collect: Set<string> = new Set<string>()): Promise<string> {
     return unified()
+
         .use(remarkParse) // Markdown → mdast
         .use(convertParagraph)
         .use(remarkTest, collect)
@@ -74,8 +75,17 @@ function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) 
                 data = {}
                 node.data = data
             }
-            if (type === 'code') {
+            if (type === 'code' || type === 'heading') {
                 return
+            }
+            if (type === 'list') {
+                if (!data) {
+                    data = {}
+                    node.data = data
+                }
+                data.hProperties = {
+                    className: ['max-w-md', 'list-disc', 'list-inside', 'dark:text-gray-400', 'mt-4', 'mb-4'],
+                }
             }
             if (value) {
                 if (type === 'text') {

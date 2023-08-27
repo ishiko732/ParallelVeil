@@ -1,16 +1,20 @@
 'use client'
 import Date from '@/app/(fsrs)/fsrs/_components/date';
 import 'highlight.js/styles/default.css';
-import React, {createRef, useEffect, useRef, useState} from "react";
+import React, {createElement, createRef, Fragment, useEffect, useRef, useState} from "react";
 import {Card, Note} from "@prisma/client";
 import {State} from "ts-fsrs";
 import PopupWord from "@/app/(article)/article/_components/showModal/popupWord";
 import CollectSelect from "@/app/(article)/article/_components/showModal/collectSelect";
 import ExtractContext, {currentWordInterface, extractInterface} from "@/context/extractContext";
-import Head from "next/head";
 import dayjs from "dayjs";
 import {loggerDebug} from "@/config/pinoConfig";
 import {articleData} from "@/app/(article)/service/article_watch";
+import rehypeReact from 'rehype-react';
+import rehypeParse from 'rehype-parse'
+import {unified} from 'unified'
+import MyLink from "@/app/(article)/article/_components/unified/MyLink";
+import MyImage from "@/app/(article)/article/_components/unified/MyImage";
 
 interface article {
     id: string,
@@ -61,12 +65,6 @@ export default function Article(props: {
         handleTransWordClick
     }
     const {articleData, convertToHtml} = props
-    if (articleData.language == undefined) {
-        articleData.language = 'Default'
-    }
-    const pageTitle = `${articleData.language} - ${articleData.title}`;
-
-
     useEffect(() => {
         const pvNotes = document.querySelectorAll(".note") as NodeListOf<HTMLSpanElement>;
         const now = dayjs().toDate().getTime()
@@ -154,25 +152,36 @@ export default function Article(props: {
                 pvNote.removeEventListener("click", handleClick);
             });
         };
-    }, [handleClick]);
 
+    }, [handleClick]);
+    const toReactNode = (content: string) => {
+        return unified()
+            .use(rehypeParse, {
+                fragment: true
+            })
+            .use(rehypeReact, {
+                createElement,
+                Fragment,
+                components: {
+                    a: MyLink,
+                    img: MyImage,
+                },
+            })
+            .processSync(convertToHtml).result as React.ReactElement;
+    };
     return (
-        <div>
-            <Head>
-                <title>{pageTitle}</title>
-            </Head>
-            <br/>
-            <h3>{articleData.title}</h3>
-            <hr/>
+        <div className="prose prose-lg max-w-none">
+            <h2 className={'mt-4'}>{articleData.title}</h2>
             <Date date={articleData.date}/>
             <br/>
             <ExtractContext.Provider value={extractValue}>
                 <CollectSelect/>
                 <PopupWord/>
             </ExtractContext.Provider>
-            <div ref={contentRef}
-                 className="pv-container"
-                 dangerouslySetInnerHTML={{__html: convertToHtml}}/>
+            {/*<div ref={contentRef}*/}
+            {/*     className="pv-container"*/}
+            {/*     dangerouslySetInnerHTML={{__html: convertToHtml}}/>*/}
+            {toReactNode(convertToHtml)}
         </div>
     );
 }

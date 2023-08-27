@@ -13,8 +13,9 @@ hr {
 }
 
 .pv-container {
-    width: 80%;
     margin: 0 auto;
+    word-wrap: normal;
+    white-space: normal;
 }
 
 .pv-content {
@@ -44,6 +45,10 @@ strong + .pv-content {
 .pv-content + img {
     margin-left: 5px;
     margin-right: 5px;
+}
+
+li div {
+    display: inline;
 }
 
 .note {
