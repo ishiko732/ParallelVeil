@@ -1,6 +1,6 @@
 {
   "name": "parallel-veil",
-  "version": "0.1.0",
+  "version": "0.1.60",
   "private": true,
   "scripts": {
     "dev": "chcp 65001&&next dev | pino-pretty",
