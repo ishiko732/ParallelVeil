@@ -8,7 +8,9 @@ import rehypeStringify from "rehype-stringify";
 import {visit} from "unist-util-visit";
 import splitWords from "./en_US";
 import type {Node} from "unified/lib";
-
+import rehypeSlug from "rehype-slug";
+import {Options, toc} from 'mdast-util-toc';
+import {Root} from "remark-toc";
 
 export function convertParagraph() {
     return (tree: Node) => {
@@ -52,20 +54,30 @@ function addText(value: string): Text {
 }
 
 
+export const getToc = (options?: Options) => {
+    return (tree: Node) => {
+        visit(tree, 'root', (node) => {
+            const result = toc(node, options);
+
+            // @ts-ignore
+            (node as Root).children = [result.map];
+        });
+    };
+};
+
 export async function convertMdToHTML(text: string, collect: Set<string> = new Set<string>()): Promise<string> {
     return unified()
-
         .use(remarkParse) // Markdown → mdast
         .use(convertParagraph)
         .use(remarkTest, collect)
         .use(highlight)
         // .use(checkAST) //mdastにアクセス
-        .use(remarkRehype) // mdast → hast
-        .use(rehypeStringify) //  hast → HTML
+        .use(remarkRehype, {allowDangerousHtml: true}) // mdast → hast
+        .use(rehypeSlug)
+        .use(rehypeStringify, {allowDangerousHtml: true}) //  hast → HTML
         // .use(checkAST) //mdastにアクセス
         .processSync(text).toString();
 }
-
 
 function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) {
     return (tree: Node) => {

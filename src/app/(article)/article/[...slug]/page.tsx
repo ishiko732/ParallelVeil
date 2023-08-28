@@ -1,5 +1,5 @@
 import React from "react";
-import {convertMdToHTML} from "@/service/analyzer/help_split";
+import {convertMdToHTML, getToc} from "@/service/analyzer/help_split";
 import {createArticle} from "@/service/db/article";
 import {Article} from "@prisma/client";
 import {createNote} from "@/service/db/note";
@@ -12,6 +12,10 @@ import {Metadata} from 'next'
 import {articleData, getArticleData, getArticlePaths} from "@/app/(article)/service/article_watch";
 import ArticlePaths from "@/app/(article)/article/_components/articlePaths";
 import {notFound} from "next/navigation";
+import {unified} from "unified";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
 
 
 export default async function Page({params}: { params: { slug: string[] } }) {
@@ -35,9 +39,18 @@ export default async function Page({params}: { params: { slug: string[] } }) {
     const words: any = {}
     Array.from(await Promise.all(promiseWords)).forEach(word => words[word.text] = word)
     const uid = Number(process.env.uid)
+    const toc = await unified()
+        .use(remarkParse)
+        .use(getToc)
+        .use(remarkRehype)
+        .use(rehypeStringify)
+        .process(articleData.text);
+    console.log("toc1", toc.toString())
+    console.log("============")
     return <>
         <FSRSProvider uid={uid} p={transParameters(await findParamsByUid({uid}))}>
-            <ArticleClientComponent articleData={articleData} convertToHtml={convertToHtml.toString()} words={words}/>
+            <ArticleClientComponent articleData={articleData} convertToHtml={convertToHtml.toString()} words={words}
+                                    toc={undefined}/>
         </FSRSProvider>
     </>
 }

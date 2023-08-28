@@ -66,3 +66,11 @@ li div {
 .note-recall {
     background-color: #f59b80;
 }
+
+:target::before {
+    content: '';
+    display: block;
+    height: 72px;
+    margin-top: -72px;
+    visibility: hidden;
+}

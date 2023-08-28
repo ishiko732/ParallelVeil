@@ -26,6 +26,7 @@ interface article {
 export default function Article(props: {
     articleData: articleData,
     convertToHtml: string,
+    toc?: string,
     words: { [key: string]: Note & { card: Card | null } }
 }) {
     const [data, setData] = useState(props.words)
@@ -39,6 +40,7 @@ export default function Article(props: {
     })
     const textRef = useRef('')
 
+    loggerDebug("toc", {toc: props.toc})
     const handleTransWordClick = (word: currentWordInterface) => {
         const temp = word.entity as (Note & { card: Card })
         temp.card.due = dayjs(temp.card.due).toDate()
