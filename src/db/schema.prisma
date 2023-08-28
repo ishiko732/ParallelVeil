@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Revlog {
+  lid            String   @id @unique @default(cuid())
+  cid            String
+  grade          Int
+  state          Int
+  elapsed_days   Int
+  scheduled_days Int
+  review         DateTime
+  card           Card     @relation(fields: [cid], references: [cid])
+}
+
+model Card {
+  cid            String    @id @unique @default(cuid())
+  due            DateTime  @default(now())
+  stability      Float
+  difficulty     Float
+  elapsed_days   Int
+  scheduled_days Int
+  reps           Int
+  lapses         Int
+  state          Int       @default(0)
+  last_review    DateTime?
+  type           Int
+  nid            String?   @unique
+  note           Note?     @relation(fields: [nid], references: [nid])
+  log            Revlog[]
+}
+
+model Parameters {
+  uid               Int     @id @unique @default(autoincrement())
+  request_retention Decimal @default(0.9)
+  maximum_interval  Int     @default(36500)
+  easy_bonus        Decimal @default(1.3)
+  hard_factor       Decimal @default(1.2)
+  w                 String  @default("{\"w\":[1,1,5,-0.5,-0.5,0.2,1.4,-0.12,0.8,2,-0.2,0.2,1]}")
+  enable_fuzz       Boolean @default(false)
+  user              User    @relation(fields: [uid], references: [uid])
+}
+
+model User {
+  uid        Int         @id @default(autoincrement())
+  username   String      @default(cuid())
+  parameters Parameters?
+}
+
+model Note {
+  nid         String        @id @unique @default(cuid())
+  text        String        @default("")
+  answer      String        @default("")
+  type        String        @default("Word")
+  parentId    String?
+  language    String        @default("en_US")
+  readed      Boolean       @default(false)
+  articleNote ArticleNote[]
+  card        Card?
+  parent      Note?         @relation("SubcategoryOf", fields: [parentId], references: [nid])
+  notes       Note[]        @relation("SubcategoryOf")
+}
+
+model Article {
+  aid         Int           @id @unique @default(autoincrement())
+  link        String
+  read        Boolean       @default(false)
+  position    Int           @default(0)
+  ArticleNote ArticleNote[]
+}
+
+model ArticleNote {
+  aid     Int
+  nid     String
+  quote   String
+  article Article @relation(fields: [aid], references: [aid])
+  note    Note    @relation(fields: [nid], references: [nid])
+
+  @@id([aid, nid])
+}

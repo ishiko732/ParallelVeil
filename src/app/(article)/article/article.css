@@ -1,0 +1,68 @@
+h1, h2, h3, h4, h5, h6 {
+    text-align: center;
+}
+
+time {
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+hr {
+    width: 80%;
+}
+
+.pv-container {
+    margin: 0 auto;
+    word-wrap: normal;
+    white-space: normal;
+}
+
+.pv-content {
+    display: inline;
+}
+
+.pv-content + .pv-content {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.pv-content span + span {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.pv-content + strong {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+strong + .pv-content {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.pv-content + img {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+li div {
+    display: inline;
+}
+
+.note {
+    cursor: pointer;
+}
+
+.note-new {
+    background-color: #dae3fc;
+}
+
+.note-learn {
+    background-color: #97f7ad;
+}
+
+.note-recall {
+    background-color: #f59b80;
+}
