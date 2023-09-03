@@ -1,23 +1,21 @@
-import {Prisma} from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import prisma from "@/service/db/index";
-import {loggerDebug} from "@/config/pinoConfig";
-
+import { loggerDebug } from "@/config/pinoConfig";
 
 export async function createArticle(data: Prisma.ArticleUncheckedCreateInput) {
-    const {aid, link} = data
-    const existingArticle = await prisma.article.findFirst({
-        where: aid ? {aid} : {link}
-    })
+  const { aid, link } = data;
+  const existingArticle = await prisma.article.findFirst({
+    where: aid ? { aid } : { link },
+  });
 
-    if (existingArticle) {
-        loggerDebug('article already exists')
-        return existingArticle
-    }
-    return prisma.article.create({
-        data: {
-            link
-        },
-    })
+  if (existingArticle) {
+    return existingArticle;
+  }
+  return prisma.article.create({
+    data: {
+      link,
+    },
+  });
 }
 
 export async function updateArticle(data: Prisma.ArticleUncheckedUpdateInput) {

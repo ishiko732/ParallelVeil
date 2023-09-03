@@ -1,32 +1,29 @@
-import {Span, Text} from 'lowlight/lib/core';
-import {unified} from "unified";
+import { Span, Text } from "lowlight/lib/core";
+import { unified } from "unified";
 import remarkParse from "remark-parse";
 import highlight from "remark-highlight.js";
-import {regexSymbol} from "@/service/analyzer/index";
+import { regexSymbol } from "@/service/analyzer/index";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
-import {visit} from "unist-util-visit";
+import { visit } from "unist-util-visit";
 import splitWords from "./en_US";
-import type {Node} from "unified/lib";
+import type { Node } from "unified/lib";
 import rehypeSlug from "rehype-slug";
-import {Options, toc} from 'mdast-util-toc';
-import {Root} from "remark-toc";
 
 export function convertParagraph() {
-    return (tree: Node) => {
-        visit(tree, 'paragraph', (node: Node) => {
-            let {data} = node
-            node.type = 'element'
-            if (!data) {
-                data = {}
-                node.data = data
-            }
-            data.hProperties = {
-                className: ['paragraph']
-            }
-        })
-    }
-
+  return (tree: Node) => {
+    visit(tree, "paragraph", (node: Node) => {
+      let { data } = node;
+      node.type = "element";
+      if (!data) {
+        data = {};
+        node.data = data;
+      }
+      data.hProperties = {
+        className: ["paragraph"],
+      };
+    });
+  };
 }
 
 
@@ -53,17 +50,6 @@ function addText(value: string): Text {
     return {type: 'text', value: value + " "}
 }
 
-
-export const getToc = (options?: Options) => {
-    return (tree: Node) => {
-        visit(tree, 'root', (node) => {
-            const result = toc(node, options);
-
-            // @ts-ignore
-            (node as Root).children = [result.map];
-        });
-    };
-};
 
 export async function convertMdToHTML(text: string, collect: Set<string> = new Set<string>()): Promise<string> {
     return unified()
