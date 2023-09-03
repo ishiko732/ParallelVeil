@@ -21,7 +21,10 @@ export default function watch(watchPath: string, fileStores: FileStores) {
             fileStores.addFile(path)
             console.log(`File ${path} has been added`)
         })
-        .on('change', async (path) => console.log(`File ${path} has been changed`))
+        .on('change', async (path) => {
+            fileStores.changeFile(path)
+            console.log(`File ${path} has been changed`)
+        })
         .on('unlink', async (path) => {
             fileStores.delete(path)
             console.log(`File ${path} has been removed`)

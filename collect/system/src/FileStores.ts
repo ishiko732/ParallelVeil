@@ -70,6 +70,11 @@ export class FileStores {
         this._add(path, 'file')
     }
 
+    changeFile(path: string) {
+        this.delete(path)
+        this._add(path, 'file')
+    }
+
     delete(path: string) {
         let routeFromPath = pathNode.relative(this.watchPath, path)
         let paths = routeFromPath.split(pathNode.sep);
