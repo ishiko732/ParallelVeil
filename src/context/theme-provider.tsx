@@ -1,12 +1,13 @@
-'use client'
+"use client";
 
-import {createContext} from 'react'
-import {PageProps} from "@/types/react";
+import { createContext, useState } from "react";
+import { PageProps } from "@/types/react";
 
-export const ThemeContext = createContext({})
+export const ThemeContext = createContext({});
 
-export default function ThemeProvider({children}: PageProps) {
-    return <ThemeContext.Provider value="dark">
-        {children}
-    </ThemeContext.Provider>
+export default function ThemeProvider({ children }: PageProps) {
+  const [mode, setMode] = useState("light");
+  return (
+    <ThemeContext.Provider value={"dark"}>{children}</ThemeContext.Provider>
+  );
 }

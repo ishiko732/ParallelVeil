@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    images: {
-        domains: ['localhost', "github.com"],
-    },
-    experimental: {
-        appDir: true,
-        serverActions: true,
-    },
-}
+  reactStrictMode: true,
+  images: {
+    domains: ["localhost", "github.com", "dummyimage.com"],
+  },
+  experimental: {
+    appDir: true,
+    serverActions: true,
+  },
+};
 
 module.exports = nextConfig
