@@ -89,9 +89,6 @@ dependencies:
   remark-html:
     specifier: ^15.0.2
     version: 15.0.2
-  remark-toc:
-    specifier: ^8.0.1
-    version: 8.0.1
   seedrandom:
     specifier: ^3.0.5
     version: 3.0.5
@@ -2072,10 +2069,6 @@ packages:
   /@types/doublearray@0.0.29:
     resolution: {integrity: sha512-3DRGIE+rhcCCiNMXzJfsRvgDx3qcVAQAzT2aecezLtHMHDPZMnhpVc2C8gcAqH3aU7DKFX5tJzlQz0po0HyDmg==}
     dev: true
-
-  /@types/extend@3.0.1:
-    resolution: {integrity: sha512-R1g/VyKFFI2HLC1QGAeTtCBWCo6n75l41OnsVYNbmKG+kempOESaodf6BeJyUM3Q0rKa/NQcTHbB2+66lNnxLw==}
-    dev: false
 
   /@types/hast@2.3.5:
     resolution: {integrity: sha512-SvQi0L/lNpThgPoleH53cdjB3y9zpLlVjRbqB3rH8hx1jiRSBGAhyjV3H+URFjNVRqt2EdYNrbZE5IsGlNfpRg==}
@@ -4410,18 +4403,6 @@ packages:
       '@types/mdast': 4.0.0
     dev: false
 
-  /mdast-util-toc@6.1.1:
-    resolution: {integrity: sha512-Er21728Kow8hehecK2GZtb7Ny3omcoPUVrmObiSUwmoRYVZaXLR751QROEFjR8W/vAQdHMLj49Lz20J55XaNpw==}
-    dependencies:
-      '@types/extend': 3.0.1
-      '@types/mdast': 3.0.12
-      extend: 3.0.2
-      github-slugger: 2.0.0
-      mdast-util-to-string: 3.2.0
-      unist-util-is: 5.2.1
-      unist-util-visit: 4.1.2
-    dev: false
-
   /mdast-util-toc@7.0.0:
     resolution: {integrity: sha512-C28UcSqjmnWuvgT8d97qpaItHKvySqVPAECUzqQ51xuMyNFFJwcFoKW77KoMjtXrclTidLQFDzLUmTmrshRweA==}
     dependencies:
@@ -5441,14 +5422,6 @@ packages:
     dependencies:
       '@types/mdast': 3.0.12
       mdast-util-to-markdown: 1.5.0
-      unified: 10.1.2
-    dev: false
-
-  /remark-toc@8.0.1:
-    resolution: {integrity: sha512-7he2VOm/cy13zilnOTZcyAoyoolV26ULlon6XyCFU+vG54Z/LWJnwphj/xKIDLOt66QmJUgTyUvLVHi2aAElyg==}
-    dependencies:
-      '@types/mdast': 3.0.12
-      mdast-util-toc: 6.1.1
       unified: 10.1.2
     dev: false
 

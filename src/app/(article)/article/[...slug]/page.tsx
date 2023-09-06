@@ -16,7 +16,7 @@ import {
 } from "@/app/(article)/service/article_watch";
 import ArticlePaths from "@/app/(article)/article/_components/articlePaths";
 import { notFound } from "next/navigation";
-import getMDToc from "@/app/(article)/article/_hooks/useToc";
+import { getMDToc } from "@/app/(article)/article/_hooks/useToc";
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const { slug } = params;
@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     return <ArticlePaths articlePaths={await getArticlePaths(slug)} />;
   }
   const articleData = fileValue.value as articleData;
-  const toc = await getMDToc(articleData.text);
+  const toc = await getMDToc(articleData.text, {});
   console.log("toc", toc);
   const collect = new Set<string>();
   const promiseAll = [
@@ -59,7 +59,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
           articleData={articleData}
           convertToHtml={convertToHtml.toString()}
           words={words}
-          toc={undefined}
+          toc={toc}
         />
       </FSRSProvider>
     </>

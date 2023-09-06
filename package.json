@@ -3,7 +3,7 @@
   "version": "0.1.60",
   "private": true,
   "scripts": {
-    "dev": "chcp 65001&&next dev | pino-pretty",
+    "dev": "next dev | pino-pretty",
     "build": "next build",
     "start": "next start | pino-pretty",
     "lint": "next lint",
