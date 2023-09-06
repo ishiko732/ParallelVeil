@@ -30,7 +30,6 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
   }
   const articleData = fileValue.value as articleData;
   const toc = await getMDToc(articleData.text, {});
-  console.log("toc", toc);
   const collect = new Set<string>();
   const promiseAll = [
     convertMdToHTML(articleData.text, collect),

@@ -74,3 +74,8 @@ li div {
     margin-top: -72px;
     visibility: hidden;
 }
+
+.word-connect::after {
+    content: " ";
+    white-space: nowrap;
+}

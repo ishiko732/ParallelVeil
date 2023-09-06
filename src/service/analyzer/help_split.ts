@@ -35,11 +35,13 @@ export function convertParagraph() {
  */
 export function addSpan(value: string, className: Array<string> = []): Span {
     return {
-        type: 'element',
-        tagName: 'span',
-        properties: {className: regexSymbol(value) ? [] : className},
-        children: [addText(value)],
-    }
+      type: "element",
+      tagName: "span",
+      properties: {
+        className: regexSymbol(value) ? ["word-connect"] : className,
+      },
+      children: [addText(value)],
+    };
 }
 
 /**
@@ -47,22 +49,27 @@ export function addSpan(value: string, className: Array<string> = []): Span {
  * @return {import('hast').Text}
  */
 function addText(value: string): Text {
-    return {type: 'text', value: value + " "}
+  return { type: "text", value: value };
 }
 
-
-export async function convertMdToHTML(text: string, collect: Set<string> = new Set<string>()): Promise<string> {
-    return unified()
-        .use(remarkParse) // Markdown → mdast
-        .use(convertParagraph)
-        .use(remarkTest, collect)
-        .use(highlight)
-        // .use(checkAST) //mdastにアクセス
-        .use(remarkRehype, {allowDangerousHtml: true}) // mdast → hast
-        .use(rehypeSlug)
-        .use(rehypeStringify, {allowDangerousHtml: true}) //  hast → HTML
-        // .use(checkAST) //mdastにアクセス
-        .processSync(text).toString();
+export async function convertMdToHTML(
+  text: string,
+  collect: Set<string> = new Set<string>(),
+): Promise<string> {
+  return (
+    unified()
+      .use(remarkParse) // Markdown → mdast
+      .use(convertParagraph)
+      .use(remarkTest, collect)
+      .use(highlight)
+      // .use(checkAST) //mdastにアクセス
+      .use(remarkRehype, { allowDangerousHtml: true }) // mdast → hast
+      .use(rehypeSlug)
+      .use(rehypeStringify, { allowDangerousHtml: true }) //  hast → HTML
+      // .use(checkAST) //mdastにアクセス
+      .processSync(text)
+      .toString()
+  );
 }
 
 function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) {
@@ -90,9 +97,9 @@ function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) 
                     node.type = 'element'
                 }
                 const words: Span[] = splitCallback((value as string)).map((text: string) => {
-                        !regexSymbol(text) && collect.add(text)
-                        return addSpan(text, ['note'])
-                    }
+                  !regexSymbol(text) && collect.add(text);
+                  return addSpan(text, ["note", "word-connect"]);
+                }
                 )
                 if (!data) {
                     data = {}

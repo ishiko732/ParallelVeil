@@ -26,6 +26,9 @@ import { unified } from "unified";
 import MyLink from "@/app/(article)/article/_components/unified/MyLink";
 import { useToc } from "@/app/(article)/article/_hooks/useToc";
 import rehypeSlug from "rehype-slug";
+import ArticleHead from "@/app/(article)/article/_components/articleHead";
+import PVSpan from "@/app/(article)/article/_components/unified/PVSpan";
+import ArticleToc from "@/app/(article)/article/_components/articleToc";
 
 interface article {
   id: string;
@@ -51,8 +54,6 @@ export default function Article(props: {
     quote: "",
   });
   const textRef = useRef("");
-
-  loggerDebug("toc", { toc: props.toc });
   const handleTransWordClick = (word: currentWordInterface) => {
     const temp = word.entity as Note & { card: Card };
     temp.card.due = dayjs(temp.card.due).toDate();
@@ -89,15 +90,15 @@ export default function Article(props: {
       }
       switch (note.card.state) {
         case State.New:
-          pvNote.className = "note note-new";
+          pvNote.className = "note note-new word-connect";
           break;
         case State.Learning:
         case State.Relearning:
-          pvNote.className = "note note-learn";
+          pvNote.className = "note note-learn word-connect";
           break;
         case State.Review:
           if (note.card.due.getTime() - now < 0) {
-            pvNote.className = "note note-recall";
+            pvNote.className = "note note-recall word-connect";
           }
           break;
       }
@@ -185,30 +186,31 @@ export default function Article(props: {
         Fragment,
         components: {
           a: MyLink,
+          span: PVSpan,
         },
       })
       .processSync(convertToHtml).result as React.ReactElement;
   };
 
-  const reactToc = useToc(props.toc);
   return (
-    <div className="prose prose-lg max-w-none">
-      <h2 className={"mt-4"}>{articleData.title}</h2>
-      <Date date={articleData.date} />
-      <br />
-      <ExtractContext.Provider value={extractValue}>
-        <CollectSelect />
-        <PopupWord />
-      </ExtractContext.Provider>
-      {reactToc !== undefined ? (
-        <div className="prose prose-stone mt-5 max-w-4xl m-auto">
-          {reactToc}
+    <div className="prose prose-lg max-w-none dark:text-white sm:flex w-full justify-around">
+      <div className={"hidden sm:block sm:w-1/6 sm:my-4 sm:h-full relative"}>
+        <ArticleToc toc={props.toc} />
+      </div>
+      <div className={"w-full sm:w-5/6"}>
+        <ArticleHead articleData={articleData} />
+        <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded dark:bg-gray-700" />
+        <ExtractContext.Provider value={extractValue}>
+          <CollectSelect />
+          <PopupWord />
+        </ExtractContext.Provider>
+        {/*<div ref={contentRef}*/}
+        {/*     className="pv-container"*/}
+        {/*     dangerouslySetInnerHTML={{__html: convertToHtml}}/>*/}
+        <div className="break-words whitespace-normal">
+          {toReactNode(convertToHtml)}
         </div>
-      ) : null}
-      {/*<div ref={contentRef}*/}
-      {/*     className="pv-container"*/}
-      {/*     dangerouslySetInnerHTML={{__html: convertToHtml}}/>*/}
-      <div className="pv-container">{toReactNode(convertToHtml)}</div>
+      </div>
     </div>
   );
 }

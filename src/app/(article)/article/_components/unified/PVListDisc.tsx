@@ -4,5 +4,5 @@ import Link from "next/link";
 
 export default function PVListDisc({ children, style, className }: any) {
   // loggerDebug("Myul",{ children, style, className });
-  return <ul className={"list-disc"}>{children}</ul>;
+    return <ul className={"list-disc marker:text-sky-400"}>{children}</ul>;
 }
