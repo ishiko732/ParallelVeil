@@ -24,11 +24,11 @@ import rehypeReact from "rehype-react";
 import rehypeParse from "rehype-parse";
 import { unified } from "unified";
 import MyLink from "@/app/(article)/article/_components/unified/MyLink";
-import { useToc } from "@/app/(article)/article/_hooks/useToc";
 import rehypeSlug from "rehype-slug";
 import ArticleHead from "@/app/(article)/article/_components/articleHead";
 import PVSpan from "@/app/(article)/article/_components/unified/PVSpan";
 import ArticleToc from "@/app/(article)/article/_components/articleToc";
+import PVImage from "@/app/(article)/article/_components/unified/PVImage";
 
 interface article {
   id: string;
@@ -185,6 +185,7 @@ export default function Article(props: {
         createElement,
         Fragment,
         components: {
+          img: PVImage,
           a: MyLink,
           span: PVSpan,
         },
