@@ -27,6 +27,7 @@
     "lowlight": "^2.9.0",
     "mdast-util-toc": "^7.0.0",
     "mobx": "^6.10.0",
+    "mobx-react-lite": "^4.0.4",
     "next": "13.4.4",
     "node-fetch": "^3.3.2",
     "notistack": "^3.0.1",

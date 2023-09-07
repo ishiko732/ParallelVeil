@@ -1,11 +1,6 @@
 import React from "react";
-import { convertMdToHTML } from "@/service/analyzer/help_split";
-import { createArticle } from "@/service/db/article";
-import { Article } from "@prisma/client";
-import { createNote } from "@/service/db/note";
 import ArticleClientComponent from "@/app/(article)/article/_components/articleContent";
 import { FSRSProvider } from "@/context/fsrsContext";
-import process from "process";
 import { findParamsByUid } from "@/service/db/params";
 import { transParameters } from "@/app/(fsrs)/fsrs/help";
 import { Metadata } from "next";
@@ -16,7 +11,9 @@ import {
 } from "@/app/(article)/service/article_watch";
 import ArticlePaths from "@/app/(article)/article/_components/articlePaths";
 import { notFound } from "next/navigation";
-import { getMDToc } from "@/app/(article)/article/_hooks/useToc";
+import getArticle from "@/app/(article)/article/_hooks/getArticle";
+import { SpanStoreProvider } from "@/app/(article)/article/_hooks/useSpanStore";
+import { ArticleClient } from "@/app/(article)/article/_components/articleClient";
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const { slug } = params;
@@ -29,37 +26,29 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     return <ArticlePaths articlePaths={await getArticlePaths(slug)} />;
   }
   const articleData = fileValue.value as articleData;
-  const toc = await getMDToc(articleData.text, {});
-  const collect = new Set<string>();
-  const promiseAll = [
-    convertMdToHTML(articleData.text, collect),
-    createArticle({ link: _id }),
-  ];
-  const [convertToHtml, dbArticle]: (string | Article)[] =
-    await Promise.all(promiseAll);
-  // const aid = (dbArticle as Article).aid
-  const promiseWords = Array.from(collect).map((word) =>
-    createNote({
-      text: word,
-    }),
+  const { toc, convertToHtml, dbArticle, words, uid } = await getArticle(
+    _id,
+    articleData,
   );
-  const words: any = {};
-  Array.from(await Promise.all(promiseWords)).forEach(
-    (word) => (words[word.text] = word),
-  );
-  const uid = Number(process.env.uid);
   return (
     <>
       <FSRSProvider
         uid={uid}
         p={transParameters(await findParamsByUid({ uid }))}
       >
-        <ArticleClientComponent
-          articleData={articleData}
-          convertToHtml={convertToHtml.toString()}
-          words={words}
-          toc={toc}
-        />
+        <SpanStoreProvider packages={words}>
+          <ArticleClient
+            articleData={articleData}
+            convertToHtml={convertToHtml.toString()}
+            toc={toc}
+          />
+        </SpanStoreProvider>
+        {/*<ArticleClientComponent*/}
+        {/*  articleData={articleData}*/}
+        {/*  convertToHtml={convertToHtml.toString()}*/}
+        {/*  words={words}*/}
+        {/*  toc={toc}*/}
+        {/*/>*/}
       </FSRSProvider>
     </>
   );
