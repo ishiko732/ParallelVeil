@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 h1, h2, h3, h4, h5, h6 {
     text-align: center;
 }
@@ -48,21 +51,21 @@ li div {
     display: inline;
 }
 
-.note {
-    cursor: pointer;
-}
+/*.note {*/
+/*    cursor: pointer;*/
+/*}*/
 
-.note-new {
-    background-color: #dae3fc;
-}
+/*.note-new {*/
+/*    background-color: #dae3fc;*/
+/*}*/
 
-.note-learn {
-    background-color: #97f7ad;
-}
+/*.note-learn {*/
+/*    background-color: #97f7ad;*/
+/*}*/
 
-.note-recall {
-    background-color: #f59b80;
-}
+/*.note-recall {*/
+/*    background-color: #f59b80;*/
+/*}*/
 
 :target::before {
     content: '';
@@ -72,7 +75,24 @@ li div {
     visibility: hidden;
 }
 
-.word-connect::after {
-    content: " ";
-    white-space: nowrap;
+@layer components {
+    .note {
+        @apply cursor-pointer hover:text-white dark:hover:text-black text-black dark:text-white
+    }
+
+    .note-new {
+        @apply bg-violet-200 hover:bg-violet-400 dark:bg-violet-400 dark:hover:bg-violet-200
+    }
+
+    .note-learn {
+        @apply underline underline-offset-4 decoration-green-300 hover:bg-green-400
+    }
+
+    .note-recall {
+        @apply underline underline-offset-2 decoration-wavy decoration-orange-300 hover:bg-orange-300
+    }
+
+    .word-connect {
+        @apply after:content-['_'] after:whitespace-nowrap
+    }
 }

@@ -1,5 +1,4 @@
 import React from "react";
-import ArticleClientComponent from "@/app/(article)/article/_components/articleContent";
 import { FSRSProvider } from "@/context/fsrsContext";
 import { findParamsByUid } from "@/service/db/params";
 import { transParameters } from "@/app/(fsrs)/fsrs/help";
@@ -42,13 +41,13 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
             convertToHtml={convertToHtml.toString()}
             toc={toc}
           />
+          {/*<ArticleClientComponent*/}
+          {/*  articleData={articleData}*/}
+          {/*  convertToHtml={convertToHtml.toString()}*/}
+          {/*  words={words}*/}
+          {/*  toc={toc}*/}
+          {/*/>*/}
         </SpanStoreProvider>
-        {/*<ArticleClientComponent*/}
-        {/*  articleData={articleData}*/}
-        {/*  convertToHtml={convertToHtml.toString()}*/}
-        {/*  words={words}*/}
-        {/*  toc={toc}*/}
-        {/*/>*/}
       </FSRSProvider>
     </>
   );

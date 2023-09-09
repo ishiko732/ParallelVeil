@@ -38,7 +38,7 @@ export function addSpan(value: string, className: Array<string> = []): Span {
       type: "element",
       tagName: "span",
       properties: {
-        className: regexSymbol(value) ? ["word-connect"] : className,
+        className: regexSymbol(value) ? [] : className,
       },
       children: [addText(value)],
     };
@@ -98,7 +98,7 @@ function remarkTest(collect: Set<string>, splitCallback: Function = splitWords) 
                 }
                 const words: Span[] = splitCallback((value as string)).map((text: string) => {
                   !regexSymbol(text) && collect.add(text);
-                  return addSpan(text, ["note", "word-connect"]);
+                  return addSpan(text, ["note"]);
                 }
                 )
                 if (!data) {

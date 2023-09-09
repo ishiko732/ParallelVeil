@@ -29,8 +29,6 @@ import ArticleHead from "@/app/(article)/article/_components/articleHead";
 import PVSpan from "@/app/(article)/article/_components/unified/PVSpan";
 import ArticleToc from "@/app/(article)/article/_components/articleToc";
 import PVImage from "@/app/(article)/article/_components/unified/PVImage";
-import { SpanStoreProvider } from "@/app/(article)/article/_hooks/useSpanStore";
-import { ArticleClient } from "@/app/(article)/article/_components/articleClient";
 
 interface article {
   id: string;
@@ -197,13 +195,6 @@ export default function Article(props: {
 
   return (
     <div className="prose prose-lg max-w-none dark:text-white sm:flex w-full justify-around">
-      <SpanStoreProvider packages={props.words}>
-        <ArticleClient
-          articleData={articleData}
-          convertToHtml={convertToHtml.toString()}
-          toc={undefined}
-        />
-      </SpanStoreProvider>
       <div className={"hidden sm:block sm:w-1/6 sm:my-4 sm:h-full relative"}>
         <ArticleToc toc={props.toc} />
       </div>
