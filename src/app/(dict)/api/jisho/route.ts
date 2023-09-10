@@ -12,5 +12,6 @@ export async function GET(request: NextRequest) {
     }
     // noinspection ES6MissingAwait
     taskAudio(query)
-    return search(query, Number(page))
+    const data = await search(query, Number(page)).then((res) => res.json());
+    return NextResponse.json(data);
 }

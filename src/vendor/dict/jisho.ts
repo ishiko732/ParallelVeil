@@ -10,6 +10,7 @@ import fs from "fs";
 import * as jsdom from "jsdom";
 import path from "path";
 import {AudioDirectory} from "@/config/dict";
+import fetchApi from "@/vendor/openai/lib/fetch-api";
 
 const jisho_api = "https://jisho.org/api/v1/search/words?keyword="
 const jisho_page = "https://jisho.org/search/"
@@ -24,15 +25,14 @@ const jisho_page = "https://jisho.org/search/"
 
 export async function search(keyword: string = "", page: number = 1) {
     const query = encodeURI(jisho_api + keyword + "&page=" + page)
-    return fetch(query, {
-        credentials: 'include',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
-        },
-        cache: 'force-cache'
-    })
+    return await fetchApi(query, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+      },
+    });
 }
 
 const {JSDOM} = jsdom;
@@ -64,14 +64,13 @@ export async function taskAudio(word: string = "") {
 
 export async function getAudioUrls(word: string = "") {
     const query = encodeURI(jisho_page + word)
-    const data = await fetch(query, {
-        credentials: 'include',
-        method: 'GET',
-        headers: {
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
-        },
-        cache: 'force-cache'
-    }).then(response => response.text())
+    const data = await fetchApi(query, {
+      method: "GET",
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+      },
+    }).then((response) => response.text());
     const dom = new JSDOM(data).window.document;
     const audioElements = dom.querySelectorAll('audio')
     const list = []
