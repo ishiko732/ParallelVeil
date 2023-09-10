@@ -58,7 +58,6 @@ const ArticleClickWord: FC = observer(function () {
     })();
     console.log(_json);
   };
-  console.log(data);
   return showModalStore.open ? (
     <ShowModal
       x={showModalStore.point.x}
@@ -67,25 +66,15 @@ const ArticleClickWord: FC = observer(function () {
         maxWidth: "500px",
       }}
       ref={thisRef}
-      className={"dark:text-black"}
+      className={"bg-white text-black dark:bg-gray-700 dark:text-white"}
     >
       {data.note && data.note.card ? (
         <>
-          <div>
+          <div className={"antialiased dark:text-white"}>
             <div className={"flex justify-center items-center content-center"}>
-              <strong style={{ textAlign: "center" }}>
-                <StateChip
-                  state={data.note.card.state}
-                  value={word}
-                  style={{ fontSize: "18px" }}
-                />
-              </strong>
-              {/*<Date date={note.card.due} inline={true} format={'YYYY/MM/DD'}*/}
-              {/*      style={{margin: '0', float: 'right'}}/>*/}
+              <StateChip state={data.note.card.state} value={word} />
             </div>
-            <QuoteContainer
-              style={{ paddingTop: "5px", paddingBottom: "5px", width: "auto" }}
-            >
+            <QuoteContainer className={"py-[5] w-auto"}>
               {phrase}
             </QuoteContainer>
             <Stack

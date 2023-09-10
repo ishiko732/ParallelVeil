@@ -77,19 +77,19 @@ li div {
 
 @layer components {
     .note {
-        @apply cursor-pointer hover:text-white dark:hover:text-black text-black dark:text-white
+        @apply cursor-pointer hover:text-white text-black dark:text-white
     }
 
     .note-new {
-        @apply bg-violet-200 hover:bg-violet-400 dark:bg-violet-400 dark:hover:bg-violet-200
+        @apply bg-violet-200 hover:bg-violet-400 dark:bg-violet-400 dark:hover:bg-violet-200 dark:hover:text-black
     }
 
     .note-learn {
-        @apply underline underline-offset-4 decoration-green-300 hover:bg-green-400
+        @apply underline underline-offset-4 decoration-green-300 hover:bg-green-400 dark:hover:text-black
     }
 
     .note-recall {
-        @apply underline underline-offset-2 decoration-wavy decoration-orange-300 hover:bg-orange-300
+        @apply underline underline-offset-2 decoration-wavy decoration-orange-300 hover:bg-orange-300 dark:hover:text-black
     }
 
     .word-connect {

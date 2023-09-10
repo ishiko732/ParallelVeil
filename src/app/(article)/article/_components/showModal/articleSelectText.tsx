@@ -34,7 +34,7 @@ const ArticleSelectText: FC = observer(function () {
         maxWidth: "500px",
       }}
       ref={thisRef}
-      className={"dark:text-black"}
+      className={"bg-white text-black dark:bg-gray-700 dark:text-white"}
     >
       <pre>
         cu:current:{String(showModalStore.selectOpen)}
