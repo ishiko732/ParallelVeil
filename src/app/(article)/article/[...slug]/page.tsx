@@ -13,6 +13,8 @@ import { notFound } from "next/navigation";
 import getArticle from "@/app/(article)/article/_hooks/getArticle";
 import { SpanStoreProvider } from "@/app/(article)/article/_hooks/useSpanStore";
 import { ArticleClient } from "@/app/(article)/article/_components/articleClient";
+import { ShowModalStoreProvider } from "@/app/(article)/article/_hooks/useShowModal";
+import RootStoreProvider from "@/app/(article)/article/_hooks/useRootStore";
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const { slug } = params;
@@ -35,7 +37,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
         uid={uid}
         p={transParameters(await findParamsByUid({ uid }))}
       >
-        <SpanStoreProvider packages={words}>
+        <RootStoreProvider packages={words}>
           <ArticleClient
             articleData={articleData}
             convertToHtml={convertToHtml.toString()}
@@ -47,7 +49,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
           {/*  words={words}*/}
           {/*  toc={toc}*/}
           {/*/>*/}
-        </SpanStoreProvider>
+        </RootStoreProvider>
       </FSRSProvider>
     </>
   );

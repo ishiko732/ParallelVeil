@@ -1,15 +1,9 @@
 "use client";
 import { observer } from "mobx-react-lite";
 import { articleData } from "../../service/article_watch";
-import {
-  SpanStoreProvider,
-  useSpanStore,
-} from "@/app/(article)/article/_hooks/useSpanStore";
+import { useSpanStore } from "@/app/(article)/article/_hooks/useSpanStore";
 import ArticleToc from "@/app/(article)/article/_components/articleToc";
 import ArticleHead from "@/app/(article)/article/_components/articleHead";
-import ExtractContext from "@/context/extractContext";
-import CollectSelect from "@/app/(article)/article/_components/showModal/collectSelect";
-import PopupWord from "@/app/(article)/article/_components/showModal/popupWord";
 import React, { createElement, Fragment } from "react";
 import { unified } from "unified";
 import rehypeParse from "rehype-parse";
@@ -18,6 +12,10 @@ import rehypeReact from "rehype-react";
 import PVImage from "@/app/(article)/article/_components/unified/PVImage";
 import MyLink from "@/app/(article)/article/_components/unified/MyLink";
 import PVSpan from "@/app/(article)/article/_components/unified/PVSpan";
+import PVCode from "@/app/(article)/article/_components/unified/PVCode";
+import ArticleSelectText from "@/app/(article)/article/_components/showModal/articleSelectText";
+import { useShowModalStoreStore } from "@/app/(article)/article/_hooks/useShowModal";
+import ArticleClickWord from "./showModal/articleClickWord";
 
 export const ArticleClient = observer(function ArticleClient(props: {
   articleData: articleData;
@@ -26,6 +24,35 @@ export const ArticleClient = observer(function ArticleClient(props: {
 }) {
   const { articleData, convertToHtml, toc } = props;
   const store = useSpanStore();
+  const showModalStore = useShowModalStoreStore();
+  const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const text = window
+      .getSelection()
+      ?.toString()
+      .replace(/\r\n/g, "")
+      .replace(/\n/g, "");
+    const vm = event.target as HTMLDivElement;
+    if (text) {
+      showModalStore.setSimple(
+        "",
+        text,
+        {
+          x: vm.offsetWidth + vm.offsetLeft,
+          y: event.clientY,
+        },
+        true,
+      );
+      //TODO
+      // const range = window.getSelection()?.getRangeAt(0);
+      // const copy=range?.cloneContents() as DocumentFragment
+      // // const span = document.createElement('span');
+      // // span.textContent = text;
+      // // span.style.textDecoration = 'underline';
+      // range?.deleteContents();
+      // range?.insertNode(copy);
+    }
+  };
+
   const toReactNode = (content: string) => {
     return unified()
       .use(rehypeParse, {
@@ -36,6 +63,7 @@ export const ArticleClient = observer(function ArticleClient(props: {
         createElement,
         Fragment,
         components: {
+          code: PVCode,
           img: PVImage,
           a: MyLink,
           span: PVSpan,
@@ -52,14 +80,12 @@ export const ArticleClient = observer(function ArticleClient(props: {
       <div className={"w-full sm:w-5/6"}>
         <ArticleHead articleData={articleData} />
         <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded dark:bg-gray-700" />
-        {/*<ExtractContext.Provider value={extractValue}>*/}
-        {/*    <CollectSelect />*/}
-        {/*    <PopupWord />*/}
-        {/*</ExtractContext.Provider>*/}
+        <ArticleSelectText />
+        <ArticleClickWord />
         {/*<div ref={contentRef}*/}
         {/*     className="pv-container"*/}
         {/*     dangerouslySetInnerHTML={{__html: convertToHtml}}/>*/}
-        <div className="break-words whitespace-normal">
+        <div className="break-words whitespace-normal" onMouseUp={handleClick}>
           {toReactNode(convertToHtml)}
         </div>
       </div>

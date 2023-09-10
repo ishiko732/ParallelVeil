@@ -1,13 +1,8 @@
-import {
-  action,
-  autorun,
-  computed,
-  makeAutoObservable,
-  observable,
-} from "mobx";
+import { action, computed, makeAutoObservable, observable } from "mobx";
 import { Card, Note } from "@prisma/client";
-
-// import { createNote } from "@/service/db/note";
+import { Card as fsrsCard, ReviewLog as fsrsLog } from "ts-fsrs/lib/models";
+import { putBody } from "@/app/(fsrs)/api/fsrs/scheduler/route";
+import { transCard } from "@/app/(fsrs)/fsrs/help";
 
 export interface packageNote {
   [key: string]: Note & { card: Card | null };
@@ -44,7 +39,7 @@ export class ObserveServerNote implements ObserveNote {
     // });
   }
 
-  async updateNote(word: string) {
+  async updateNote(word: string, grade: putBody) {
     console.log(`updateNote:${word}`);
     // this.notes[word] = await createNote({
     //   text: word,
@@ -78,16 +73,15 @@ export class ObserveClientNote implements ObserveNote {
       return;
     }
     console.log(`addNote:${word}`);
-    // this.notes[word] = await createNote({
-    //   text: word,
-    // });
   }
 
-  async updateNote(word: string) {
+  async updateNote(word: string, grade: putBody) {
     console.log(`updateNote:${word}`);
-    // this.notes[word] = await createNote({
-    //   text: word,
-    // });
+    const data = await fsrsScheduler(grade);
+    this.notes[word] = {
+      ...data,
+      card: transCard(data.card),
+    };
   }
 }
 
@@ -98,5 +92,20 @@ export interface ObserveNote {
 
   addNote(word: string): void;
 
-  updateNote(word: string): void;
+  updateNote(word: string, grade: putBody): void;
+}
+
+export interface gradeDataFromNote {
+  card: fsrsCard;
+  log: fsrsLog;
+}
+
+export async function fsrsScheduler(json: putBody) {
+  return await fetch(`/api/fsrs/scheduler`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(json),
+  }).then((res) => res.json());
 }

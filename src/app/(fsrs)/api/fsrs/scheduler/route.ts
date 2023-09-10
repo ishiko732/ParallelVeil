@@ -3,10 +3,10 @@ import {Card as fsrsCard, ReviewLog as fsrsLog} from "ts-fsrs";
 import {updateNote} from "@/service/db/note";
 import {Prisma} from "@prisma/client";
 
-interface putBody {
-    _note: Prisma.NoteUpdateWithoutNotesInput,
-    _card: fsrsCard,
-    _log: fsrsLog
+export interface putBody {
+  _note: Prisma.NoteUpdateWithoutNotesInput;
+  _card: fsrsCard;
+  _log: fsrsLog;
 }
 
 export async function PUT(request: NextRequest) {
