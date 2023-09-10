@@ -77,6 +77,12 @@ export class ObserveClientNote implements ObserveNote {
 
   async updateNote(word: string, grade: putBody) {
     console.log(`updateNote:${word}`);
+    if (this.notes[word] && this.notes[word].card) {
+      // @ts-ignore
+      this.notes[word].card.state = grade._card.state;
+      // @ts-ignore
+      this.notes[word].card.due = grade._card.due;
+    }
     const data = await fsrsScheduler(grade);
     this.notes[word] = {
       ...data,
