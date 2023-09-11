@@ -3,6 +3,7 @@ import React, { FormEvent } from "react";
 import { useOpenAiStream } from "@/vendor/openai/lib/useTextStream";
 import OpenAiIcon from "@/vendor/openai/openAiIcon";
 import SendIcon from "@/components/SendIcon";
+import UserIcon from "@/vendor/openai/UserIcon";
 
 export default function GPT({
   word,
@@ -30,8 +31,13 @@ export default function GPT({
     <div>
       {messages.map((message, index) => (
         <div key={message.id}>
-          <p>
-            {message.role}: {message.content}
+          <p className={"py-1"}>
+            {message.role === "bot" ? (
+              <OpenAiIcon className={"inline"} />
+            ) : (
+              <UserIcon className={"inline"} />
+            )}
+            {message.content}
           </p>
         </div>
       ))}

@@ -122,7 +122,7 @@ const ArticleClickWord: FC = observer(function () {
             </div>
             <div
               className={
-                "flex justify-center py-1.5 w-full border-t border-gray-200  dark:border-gray-600 pt-2.5"
+                "flex justify-center py-1.5 w-full border-t border-gray-200  dark:border-gray-600 pt-2.5 pb-5"
               }
             >
               <GradeButtons
