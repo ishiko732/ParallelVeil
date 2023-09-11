@@ -32,6 +32,11 @@ const ArticleSelectText: FC = observer(function () {
       y={showModalStore.point.y}
       style={{
         maxWidth: "500px",
+        boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
+        padding: "10px",
+        wordBreak: "keep-all",
+        overflow: "auto",
+        maxHeight: "250px",
       }}
       ref={thisRef}
       className={"bg-white text-black dark:bg-gray-700 dark:text-white"}

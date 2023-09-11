@@ -30,7 +30,7 @@ export default function GradeButtons({
   return groups.length > 0 ? (
     <div
       style={style}
-      className={"inline-flex rounded-md shadow-sm"}
+      className={"flex items-center space-x-2 rounded-b"}
       role={"GradeButtons"}
     >
       {groups.map((grade) => {
@@ -46,7 +46,7 @@ export default function GradeButtons({
             key={Rating[grade]}
             type={"button"}
             className={
-              "px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-l-lg hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700"
+              "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             }
             // style={{textTransform: 'capitalize'}}
             onClick={() => {

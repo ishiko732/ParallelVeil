@@ -12,7 +12,7 @@ import { Card as fsrsCard, ReviewLog as fsrsLog } from "ts-fsrs/lib/models";
 import ShowModal from "@/components/showModal";
 import StateChip from "@/app/(fsrs)/fsrs/_components/state";
 import QuoteContainer from "@/app/(article)/article/_components/quote";
-import { CircularProgress, Divider, Stack } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 import GradeButtons from "@/app/(fsrs)/fsrs/_components/buttons";
 import { transCard } from "@/app/(fsrs)/fsrs/help";
 import { Rating, State } from "ts-fsrs";
@@ -21,6 +21,8 @@ import GPT from "@/app/(article)/article/_components/gpt";
 import { observer } from "mobx-react-lite";
 import { useShowModalStoreStore } from "@/app/(article)/article/_hooks/useShowModal";
 import { useSpanStore } from "@/app/(article)/article/_hooks/useSpanStore";
+import Loading from "@/components/Loading";
+import WordClose from "@/app/(article)/article/_components/showModal/WordClose";
 
 const ArticleClickWord: FC = observer(function () {
   const { f } = useContext(FSRSContext);
@@ -62,29 +64,68 @@ const ArticleClickWord: FC = observer(function () {
     <ShowModal
       x={showModalStore.point.x}
       y={showModalStore.point.y}
-      style={{
-        maxWidth: "500px",
-      }}
       ref={thisRef}
-      className={"bg-white text-black dark:bg-gray-700 dark:text-white"}
+      className={
+        "bg-white text-black dark:bg-gray-700 dark:text-white overflow-x-hidden overflow-y-auto rounded-lg"
+      }
     >
       {data.note && data.note.card ? (
-        <>
-          <div className={"antialiased dark:text-white"}>
-            <div className={"flex justify-center items-center content-center"}>
-              <StateChip state={data.note.card.state} value={word} />
+        <div className={"relative w-full max-w-md max-h-full"}>
+          <div className={"relative rounded-lg shadow "}>
+            <div
+              className={"items-center border-b rounded-t dark:border-gray-600"}
+            >
+              <div className="flex items-center justify-between p-5 flex-row">
+                <div>
+                  <DSR
+                    card={transCard(data.note.card)}
+                    now={dayjs()}
+                    fsrs={f}
+                    className={"text-xs flex flex-col"}
+                  />
+                </div>
+                <div className={"content-center"}>
+                  <StateChip state={data.note.card.state} value={word} />
+                </div>
+                <WordClose
+                  handleClick={(e) => {
+                    showModalStore.updateOpen(false);
+                  }}
+                />
+              </div>
+              <QuoteContainer className={"pb-1.5 mx-5 w-auto"}>
+                {phrase}
+              </QuoteContainer>
             </div>
-            <QuoteContainer className={"py-[5] w-auto"}>
-              {phrase}
-            </QuoteContainer>
-            <Stack
-              direction="row"
-              justifyContent="center"
-              alignItems="center"
-              spacing={2}
+            <div className={"p-6 space-y-6"}>
+              {/*<div>*/}
+              {/*  /!*  <div>*!/*/}
+              {/*  /!*    {data.ejje ? (*!/*/}
+              {/*  /!*      data.ejje.map((answer: any, index: number) => (*!/*/}
+              {/*  /!*        <p key={`ejje-answer${index}`}>{JSON.stringify(answer)}</p>*!/*/}
+              {/*  /!*      ))*!/*/}
+              {/*  /!*    ) : (*!/*/}
+              {/*  /!*      <CircularProgress />*!/*/}
+              {/*  /!*    )}*!/*/}
+              {/*  /!*  </div>*!/*/}
+              {/*  /!*  <div>*!/*/}
+              {/*  /!*    {data.jisho ? (*!/*/}
+              {/*  /!*      data.jisho.map((answer: any, index: number) => (*!/*/}
+              {/*  /!*        <p key={`jisho-answer${index}`}>{JSON.stringify(answer)}</p>*!/*/}
+              {/*  /!*      ))*!/*/}
+              {/*  /!*    ) : (*!/*/}
+              {/*  /!*      <CircularProgress />*!/*/}
+              {/*  /!*    )}*!/*/}
+              {/*  /!*  </div>*!/*/}
+              {/*</div>*/}
+              <GPT word={word} phrase={phrase} />
+            </div>
+            <div
+              className={
+                "flex justify-center py-1.5 w-full border-t border-gray-200  dark:border-gray-600 pt-2.5"
+              }
             >
               <GradeButtons
-                style={{ paddingTop: "10px" }}
                 card={transCard(data.note.card)}
                 now={dayjs()}
                 fsrs={f}
@@ -96,43 +137,11 @@ const ArticleClickWord: FC = observer(function () {
                 }
                 handleClick={handleClick}
               />
-              <DSR
-                card={transCard(data.note.card)}
-                now={dayjs()}
-                fsrs={f}
-                style={{
-                  fontSize: "12px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              />
-            </Stack>
-          </div>
-          <Divider style={{ paddingTop: "10px", width: "auto" }} />
-          <div>
-            <div>
-              {data.ejje ? (
-                data.ejje.map((answer: any, index: number) => (
-                  <p key={`ejje-answer${index}`}>{JSON.stringify(answer)}</p>
-                ))
-              ) : (
-                <CircularProgress />
-              )}
             </div>
-            <div>
-              {data.jisho ? (
-                data.jisho.map((answer: any, index: number) => (
-                  <p key={`jisho-answer${index}`}>{JSON.stringify(answer)}</p>
-                ))
-              ) : (
-                <CircularProgress />
-              )}
-            </div>
-            <GPT word={word} phrase={phrase} />
           </div>
-        </>
+        </div>
       ) : (
-        <CircularProgress />
+        <Loading />
       )}
     </ShowModal>
   ) : null;

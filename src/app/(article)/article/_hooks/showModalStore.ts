@@ -4,6 +4,7 @@ import {
   computed,
   makeAutoObservable,
   observable,
+  runInAction,
 } from "mobx";
 import { putBody } from "@/app/(fsrs)/api/fsrs/scheduler/route";
 
@@ -61,36 +62,53 @@ export default class ShowModalStore {
   }
 
   async setCurrent(word: string, phrase: string, nid: string) {
-    this.loading = true;
-    this.currentWord = word;
-    this.currentPhrase = phrase;
-    if (this.cache[word] === undefined) {
-      this.cache[word] = {};
-    }
-    this.cache[word] = {
-      ...this.cache[word],
-      phrase,
-      note: await getNote(nid),
-    };
-    this.loading = false;
+    runInAction(() => {
+      this.loading = true;
+      this.currentWord = word;
+      this.currentPhrase = phrase;
+      if (this.cache[word] === undefined) {
+        this.cache[word] = {};
+      }
+    });
+    const note = await getNote(nid);
+    runInAction(() => {
+      this.cache[word] = {
+        ...this.cache[word],
+        phrase,
+        note: note,
+      };
+      this.loading = false;
+    });
     if (this.cache[word].jisho === undefined) {
-      this.jisho = false;
+      runInAction(() => {
+        this.jisho = false;
+      });
       getJisho(word, 1)
         .then((res) => {
-          this.cache[word].jisho = res;
+          runInAction(() => {
+            this.cache[word].jisho = res;
+          });
         })
         .finally(() => {
-          this.jisho = true;
+          runInAction(() => {
+            this.jisho = true;
+          });
         });
     }
     if (this.cache[word].ejje === undefined) {
-      this.ejje = false;
+      runInAction(() => {
+        this.ejje = false;
+      });
       getWeblio_ejje(word)
         .then((res) => {
-          this.cache[word].ejje = res;
+          runInAction(() => {
+            this.cache[word].ejje = res;
+          });
         })
         .finally(() => {
-          this.ejje = true;
+          runInAction(() => {
+            this.ejje = true;
+          });
         });
     }
   }

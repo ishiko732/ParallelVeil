@@ -45,7 +45,7 @@ function Chip({
     <span
       style={style}
       className={
-        "px-2 py-1 mx-2 rounded text-lg strong text-center dark:text-white " +
+        "px-2 py-1 mx-2 rounded text-xl strong text-center dark:text-white " +
         (className ? className : "")
       }
     >

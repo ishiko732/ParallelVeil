@@ -77,11 +77,11 @@ li div {
 
 @layer components {
     .note {
-        @apply cursor-pointer hover:text-white text-black dark:text-white
+        @apply cursor-pointer text-black dark:text-white
     }
 
     .note-new {
-        @apply bg-violet-200 hover:bg-violet-400 dark:bg-violet-400 dark:hover:bg-violet-200 dark:hover:text-black
+        @apply bg-violet-200 hover:text-white hover:bg-violet-400 dark:bg-violet-400 dark:hover:bg-violet-200 dark:hover:text-black
     }
 
     .note-learn {
