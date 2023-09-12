@@ -85,10 +85,11 @@ model ArticleNote {
 }
 
 model Interpret {
-  extendId   String   @id @unique @default(cuid())
   word       String
-  language   String   @default("en-US")
-  interpret  String
+  language   String
   model      String
+  interpret  String
   updateTime DateTime @default(now())
+
+  @@id([word, language, model])
 }

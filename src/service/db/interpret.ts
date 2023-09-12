@@ -2,6 +2,7 @@ import { Card, Note, Prisma } from "@prisma/client";
 import prisma from "@/service/db/index";
 import { search as jishoSearch, taskAudio } from "@/vendor/dict/jisho";
 import search from "@/vendor/dict/weblio.ejje";
+import { loggerInfo } from "@/config/pinoConfig";
 
 export async function updateAndCreateInterpret(
   data: Prisma.InterpretUncheckedCreateInput,
@@ -12,16 +13,21 @@ export async function updateAndCreateInterpret(
   });
 
   if (existingInterpret) {
-    return prisma.interpret.update({
-      where: { extendId: existingInterpret.extendId },
+    prisma.interpret.update({
+      where: {
+        word_language_model: {
+          word,
+          language,
+          model,
+        },
+      },
       data: {
-        word,
-        language,
-        model,
         interpret,
       },
     });
+    return existingInterpret;
   }
+  loggerInfo("createInterpret", { word, language, model });
   return prisma.interpret.create({
     data: {
       word,
@@ -36,6 +42,11 @@ export async function createInterpret(
   data: Prisma.InterpretUncheckedCreateInput,
 ) {
   const { word, language, model, interpret } = data;
+  const dataDB = await findInterpret({ word, language, model });
+  if (dataDB) {
+    return;
+  }
+  loggerInfo("createInterpret", { word, language, model });
   return await prisma.interpret.create({
     data: {
       word,
@@ -59,8 +70,11 @@ export async function autoInterpret(
 ) {
   for (let key of Object.keys(words)) {
     let word = words[key].text;
-    autoJisho(word, targetLanguage);
-    autoEjje(word, targetLanguage);
+    const awaitData = [
+      autoJisho(word, targetLanguage),
+      autoEjje(word, targetLanguage),
+    ];
+    await Promise.all(awaitData);
   }
 }
 
