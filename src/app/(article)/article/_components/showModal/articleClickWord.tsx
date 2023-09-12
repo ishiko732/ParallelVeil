@@ -98,26 +98,28 @@ const ArticleClickWord: FC = observer(function () {
               </QuoteContainer>
             </div>
             <div className={"p-6 space-y-6"}>
-              {/*<div>*/}
-              {/*  /!*  <div>*!/*/}
-              {/*  /!*    {data.ejje ? (*!/*/}
-              {/*  /!*      data.ejje.map((answer: any, index: number) => (*!/*/}
-              {/*  /!*        <p key={`ejje-answer${index}`}>{JSON.stringify(answer)}</p>*!/*/}
-              {/*  /!*      ))*!/*/}
-              {/*  /!*    ) : (*!/*/}
-              {/*  /!*      <CircularProgress />*!/*/}
-              {/*  /!*    )}*!/*/}
-              {/*  /!*  </div>*!/*/}
-              {/*  /!*  <div>*!/*/}
-              {/*  /!*    {data.jisho ? (*!/*/}
-              {/*  /!*      data.jisho.map((answer: any, index: number) => (*!/*/}
-              {/*  /!*        <p key={`jisho-answer${index}`}>{JSON.stringify(answer)}</p>*!/*/}
-              {/*  /!*      ))*!/*/}
-              {/*  /!*    ) : (*!/*/}
-              {/*  /!*      <CircularProgress />*!/*/}
-              {/*  /!*    )}*!/*/}
-              {/*  /!*  </div>*!/*/}
-              {/*</div>*/}
+              <div>
+                <div>
+                  {data.ejje ? (
+                    data.ejje.map((answer: any, index: number) => (
+                      <p key={`ejje-answer${index}`}>
+                        {JSON.stringify(answer)}
+                      </p>
+                    ))
+                  ) : (
+                    <Loading />
+                  )}
+                </div>
+                {/*  <div>*/}
+                {/*    {data.jisho ? (*/}
+                {/*      data.jisho.map((answer: any, index: number) => (*/}
+                {/*        <p key={`jisho-answer${index}`}>{JSON.stringify(answer)}</p>*/}
+                {/*      ))*/}
+                {/*    ) : (*/}
+                {/*      <CircularProgress />*/}
+                {/*    )}*/}
+                {/*  </div>*/}
+              </div>
               <GPT word={word} phrase={phrase} />
             </div>
             <div

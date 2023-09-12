@@ -83,3 +83,12 @@ model ArticleNote {
 
   @@id([aid, nid])
 }
+
+model Interpret {
+  extendId   String   @id @unique @default(cuid())
+  word       String
+  language   String   @default("en-US")
+  interpret  String
+  model      String
+  updateTime DateTime @default(now())
+}
