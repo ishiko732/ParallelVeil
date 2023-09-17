@@ -26,7 +26,7 @@ export default async function getArticle(aid: string, articleDB: articleData) {
     (word) => (words[word.text] = word),
   );
   const uid = Number(process.env.uid);
-  autoInterpret(words, "ja_JP");
+  // autoInterpret(words, "ja_JP");
 
   return {
     convertToHtml: convertToHtml as string,

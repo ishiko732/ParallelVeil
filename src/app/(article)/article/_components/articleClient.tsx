@@ -74,9 +74,9 @@ export const ArticleClient = observer(function ArticleClient(props: {
 
   return (
     <div className="prose prose-lg max-w-none dark:text-white sm:flex w-full justify-around">
-      <div className={"hidden sm:block sm:w-1/6 sm:my-4 sm:h-full relative"}>
-        <ArticleToc toc={props.toc} />
-      </div>
+      {/*<div className={"hidden sm:block sm:w-1/6 sm:my-4 sm:h-full relative"}>*/}
+      {/*  <ArticleToc toc={props.toc} />*/}
+      {/*</div>*/}
       <div className={"w-full sm:w-5/6"}>
         <ArticleHead articleData={articleData} />
         <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded dark:bg-gray-700" />
